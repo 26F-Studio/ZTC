@@ -1,4 +1,4 @@
-local require=simpRequire('assets.game.')
+local require=simpRequire('ZTC.')
 
 local gc=love.graphics
 local gc_push,gc_pop=gc.push,gc.pop

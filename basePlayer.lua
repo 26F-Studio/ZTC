@@ -788,7 +788,7 @@ function P.new(remote)
 
     self.texts=TEXT.new()
     self.particles=setmetatable({},{__index=function(p,k)
-        p[k]=require'assets.game.particleSystemTemplate'[k]:clone()
+        p[k]=require'ZTC.particleSystemTemplate'[k]:clone()
         return p[k]
     end})
 

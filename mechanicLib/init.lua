@@ -1,5 +1,5 @@
 -- Fake require function, only do string manipulation, real require when needed
-local require=simpRequire(function(path) return 'assets/game/mechanicLib/'..path..'.lua' end)
+local require=simpRequire(function(path) return 'ZTC/mechanicLib/'..path..'.lua' end)
 
 ---@class Techmino.MechLib
 local mechLib={

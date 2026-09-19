@@ -124,7 +124,7 @@ end
 ---| 'Physical'
 
 love.graphics.setDefaultFilter('nearest','nearest')
-local require=simpRequire('assets.game.')
+local require=simpRequire('ZTC.')
 brikRotSys.None=     require'rotsys_brik.none'
 brikRotSys.TRS=      require'rotsys_brik.trs'
 brikRotSys.SRS=      require'rotsys_brik.srs'

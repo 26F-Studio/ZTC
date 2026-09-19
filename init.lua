@@ -1,4 +1,4 @@
-local require=simpRequire('assets.game.')
+local require=simpRequire('ZTC.')
 Brik=require'briks'
 require'rotsys_brik'
 
