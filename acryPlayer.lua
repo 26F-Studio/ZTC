@@ -738,8 +738,6 @@ local baseEnv={
     -- Other
     maxActionHistory=260,
     script=false,
-
-    -- May be overrode with user setting
     skin='acry_template',
     shakeness=.26,
     inputDelay=0,
