@@ -6,7 +6,7 @@ local gc=love.graphics
 
 ---@type Techmino.MechLib
 mechLib={}
-local modeLib={}
+local modeLib={} ---@type Map<string | Techmino.Mode>
 local modeMeta={
     __index={
         initialize=NULL,
@@ -164,33 +164,15 @@ function GAME._refresh()
 end
 GAME._refresh()
 
----@return Techmino.Mode
-function GAME.getMode(name)
-    if modeLib[name] then
-        return modeLib[name]
-    else
-        local path='assets/mode/'..name..'.lua'
-        assert(love.filesystem.getInfo(path) and FILE.isSafe(path),"No mode named "..tostring(name))
-        local M=FILE.load(path,'-lua')
-        assert(type(M)=='table',"WTF")
-        setmetatable(M,modeMeta)
-        assert(type(M.initialize)         =='function',"[mode].initialize must be function")
-        assert(type(M.settings)           =='table',   "[mode].settings must be table")
-        assert(type(layoutFuncs[M.layout])=='function',"[mode].layout type wrong")
-        assert(type(M.checkFinish)        =='function',"[mode].checkFinish must be function")
-        assert(type(M.result)             =='function',"[mode].result must be function")
-        assert(type(M.resultPage)         =='function',"[mode].resultPage must be function")
-
-        for _,m in next,{'brik','gela','acry'} do
-            if M.settings[m] then
-                RegFuncLib(M.settings[m].event,name)
-            end
-        end
-
-        M.name=name
-        modeLib[name]=M
-        return M
-    end
+--- Register mode to the modeLib
+---@param name string
+---@param path string
+function GAME.addMode(name,path)
+    assert(type(name)=='string',"name must be string")
+    assert(not modeLib[name],"mode "..tostring(name).." already exists")
+    assert(type(path)=='string',"path must be string")
+    if not (love.filesystem.getInfo(path) and FILE.isSafe(path)) then LOG('warn',"No mode file named "..tostring(name)) end
+    modeLib[name]=path
 end
 
 function GAME.load(mode,seed)
@@ -202,14 +184,31 @@ function GAME.load(mode,seed)
     GAME.playing=true
     GAME.playerList={}
     GAME.playerMap={}
-
-    GAME.hitWaves={}
-
     GAME.mainPlayer=false
     GAME.seed=seed or math.random(2^16,2^26)
-    GAME.mode=mode and GAME.getMode(mode) or NONE
+    local M=modeLib[mode]
+    if type(M)=='string' then
+        -- Load & Cache the mode file
+        assert(love.filesystem.getInfo(M) and FILE.isSafe(M),"No mode file: "..tostring(mode))
+        M=FILE.load(M,'-lua')
+        assert(type(M)=='table',"Mode file must return a table")
+        setmetatable(M,modeMeta)
+        assert(type(M.initialize)=='function',"[mode].initialize must be function")
+        assert(type(M.settings)=='table',   "[mode].settings must be table")
+        assert(type(layoutFuncs[M.layout])=='function',"[mode].layout type wrong")
+        assert(type(M.checkFinish)=='function',"[mode].checkFinish must be function")
+        assert(type(M.result)=='function',"[mode].result must be function")
+        assert(type(M.resultPage)=='function',"[mode].resultPage must be function")
+        for _,plyType in next,{'brik','gela','acry'} do
+            if M.settings[plyType] then
+                RegFuncLib(M.settings[plyType].event,mode)
+            end
+        end
+        M.name=mode
+        modeLib[mode]=M
+    end
+    GAME.mode=M
     if GAME.mode.initialize then GAME.mode.initialize() end
-
     if #GAME.playerList==0 then
         MSG.log('warn',"No players created in this mode")
     else
@@ -233,6 +232,8 @@ function GAME.load(mode,seed)
 
         layoutFuncs[GAME.mode['layout']]()
     end
+
+    GAME.hitWaves={}
 end
 
 function GAME.unload()
@@ -475,6 +476,7 @@ function GAME.render()
     else
         gc.setShader(SHADER.none) -- Directly draw the content, don't consider color, for better performance(?)
     end
+    gc.setColor(1,1,1)
     gc.draw(ZENITHA.bigCanvas.player)
     gc.setShader()
 end
@@ -491,8 +493,10 @@ function GAME._addHitWave(x,y,power)
         table.remove(GAME.hitWaves,maxI)
     end
     table.insert(GAME.hitWaves,{
-        x,y,
-        nil,nil, -- power1 & power2, calculated before sending uniform
+        x,
+        y,
+        nil,
+        nil, -- power1 & power2, calculated before sending uniform
         time=0,
         power=power*SETTINGS.system.hitWavePower,
     })
