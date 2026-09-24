@@ -449,17 +449,20 @@ function GAME.update(dt)
 end
 
 local _canvasSetting={stencil=true}
+local gc_setCanvas,gc_setShader=GC.setCanvas,GC.setShader
+local gc_replaceTransform,gc_applyTransform=GC.replaceTransform,GC.applyTransform
+local gc_clear,gc_draw,gc_setColor=GC.clear,GC.draw,GC.setColor
 function GAME.render()
     if not GAME.playerList then return end
     _canvasSetting[1]=ZENITHA.bigCanvas.player
-    gc.setCanvas(_canvasSetting)
-    gc.replaceTransform(SCR.xOy_m)
-    gc.applyTransform(GAME.camera.transform)
-    gc.clear(0,0,0,0)
+    gc_setCanvas(_canvasSetting)
+    gc_replaceTransform(SCR.xOy_m)
+    gc_applyTransform(GAME.camera.transform)
+    gc_clear(0,0,0,0)
     for _,P in next,GAME.playerList do P:render() end
-    gc.setCanvas()
+    gc_setCanvas()
 
-    gc.replaceTransform(SCR.origin)
+    gc_replaceTransform(SCR.origin)
     if GAME.hitWaves[1] then
         local L=GAME.hitWaves
         for i=1,#L do
@@ -472,13 +475,13 @@ function GAME.render()
             end
         end
         SHADER.warp:send('hitWaves',unpack(L))
-        gc.setShader(SHADER.warp)
+        gc_setShader(SHADER.warp)
     else
-        gc.setShader(SHADER.none) -- Directly draw the content, don't consider color, for better performance(?)
+        gc_setShader(SHADER.none) -- Directly draw the content, don't consider color, for better performance(?)
     end
-    gc.setColor(1,1,1)
-    gc.draw(ZENITHA.bigCanvas.player)
-    gc.setShader()
+    gc_setColor(1,1,1)
+    gc_draw(ZENITHA.bigCanvas.player)
+    gc_setShader()
 end
 
 function GAME._addHitWave(x,y,power)
