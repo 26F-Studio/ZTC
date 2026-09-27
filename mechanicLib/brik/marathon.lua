@@ -123,8 +123,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
         P.modeData.level=1
         P.modeData.target.point=100
         P.modeData.maxHold=0
-        P.modeData.storedAsd=P.settings.asd
-        P.modeData.storedAsp=P.settings.asp
+        P.modeData.storedASD=P.settings.asd
+        P.modeData.storedASP=P.settings.asp
         P.settings.bufferMove='hold'
         P.settings.bufferRotate='hold'
         P.settings.bufferHold='hold'
@@ -165,8 +165,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             marathon.hypersonic_event_playerInit(P)
 
             P.settings.dropDelay=0
-            P.settings.asd=max(P.modeData.storedAsd,levels[1].asd)
-            P.settings.asp=max(P.modeData.storedAsp,levels[1].asp)
+            P.settings.asd=max(P.modeData.storedASD,levels[1].asd)
+            P.settings.asp=max(P.modeData.storedASP,levels[1].asp)
             P.settings.lockDelay=levels[1].lock
             P.settings.spawnDelay=levels[1].spawn
             P.settings.clearDelay=300
@@ -189,8 +189,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
                         md.level=md.level+1
                         md.target.point=100*md.level
 
-                        P.settings.asd=max(md.storedAsd,levels[md.level].asd)
-                        P.settings.asp=max(md.storedAsp,levels[md.level].asp)
+                        P.settings.asd=max(md.storedASD,levels[md.level].asd)
+                        P.settings.asp=max(md.storedASP,levels[md.level].asp)
                         P.settings.lockDelay=levels[md.level].lock
                         P.settings.spawnDelay=levels[md.level].spawn
                     else
@@ -224,8 +224,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             P.modeData.bumpTimer=false
 
             P.settings.dropDelay=0
-            P.settings.asd=max(P.modeData.storedAsd,levels[1].asd)
-            P.settings.asp=max(P.modeData.storedAsp,levels[1].asp)
+            P.settings.asd=max(P.modeData.storedASD,levels[1].asd)
+            P.settings.asp=max(P.modeData.storedASP,levels[1].asp)
             P.settings.lockDelay=levels[1].lock
             P.settings.spawnDelay=levels[1].spawn
             P.settings.clearDelay=levels[1].clear
@@ -282,8 +282,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
                         md.level=md.level+1
                         md.target.point=100*md.level
 
-                        P.settings.asd=max(md.storedAsd,levels[md.level].asd)
-                        P.settings.asp=max(md.storedAsp,levels[md.level].asp)
+                        P.settings.asd=max(md.storedASD,levels[md.level].asd)
+                        P.settings.asp=max(md.storedASP,levels[md.level].asp)
                         P.settings.lockDelay=levels[md.level].lock
                         P.settings.spawnDelay=levels[md.level].spawn
                         P.settings.clearDelay=levels[md.level].clear
@@ -341,8 +341,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             P.modeData.showAllTimer=endAllInterval
 
             P.settings.dropDelay=0
-            P.settings.asd=max(P.modeData.storedAsd,levels[1].asd)
-            P.settings.asp=max(P.modeData.storedAsp,levels[1].asp)
+            P.settings.asd=max(P.modeData.storedASD,levels[1].asd)
+            P.settings.asp=max(P.modeData.storedASP,levels[1].asp)
             P.settings.lockDelay=levels[1].lock
             P.settings.spawnDelay=levels[1].spawn
             P.settings.clearDelay=levels[1].clear
@@ -428,8 +428,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
                         md.level=md.level+1
                         md.target.point=100*md.level
 
-                        P.settings.asd=max(md.storedAsd,levels[md.level].asd)
-                        P.settings.asp=max(md.storedAsp,levels[md.level].asp)
+                        P.settings.asd=max(md.storedASD,levels[md.level].asd)
+                        P.settings.asp=max(md.storedASP,levels[md.level].asp)
                         P.settings.lockDelay=levels[md.level].lock
                         P.settings.spawnDelay=levels[md.level].spawn
                         P.settings.clearDelay=levels[md.level].clear
@@ -473,8 +473,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             marathon.hypersonic_event_playerInit(P)
 
             P.settings.dropDelay=0
-            P.settings.asd=max(P.modeData.storedAsd,levels[1].asd)
-            P.settings.asp=max(P.modeData.storedAsp,levels[1].asp)
+            P.settings.asd=max(P.modeData.storedASD,levels[1].asd)
+            P.settings.asp=max(P.modeData.storedASP,levels[1].asp)
             P.settings.lockDelay=levels[1].lock
             P.settings.spawnDelay=levels[1].spawn
             P.settings.clearDelay=levels[1].clear
@@ -506,8 +506,8 @@ do -- hypersonic (they are variations of marathon, aren't they?)
                         end
                         md.target.point=100*md.level
 
-                        P.settings.asd=max(md.storedAsd,levels[md.level].asd)
-                        P.settings.asp=max(md.storedAsp,levels[md.level].asp)
+                        P.settings.asd=max(md.storedASD,levels[md.level].asd)
+                        P.settings.asp=max(md.storedASP,levels[md.level].asp)
                         P.settings.lockDelay=levels[md.level].lock
                         P.settings.spawnDelay=levels[md.level].spawn
                         P.settings.clearDelay=levels[md.level].clear
