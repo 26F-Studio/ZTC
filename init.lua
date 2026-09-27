@@ -213,7 +213,7 @@ function GAME.load(mode,seed)
         MSG.log('warn',"No players created in this mode")
     else
         if GAME.mainPlayer then
-            local conf=SETTINGS['game_'..GAME.mainPlayer.gameMode]
+            local conf=CONF['game_'..GAME.mainPlayer.gameMode]
             if conf then GAME.mainPlayer:loadSettings(conf) end
         end
         if GAME.mode.settings then
@@ -315,7 +315,7 @@ function GAME.cursorDown(x,y,tid,id)
     if p.gameMode=='acry' then
     x,y=GAME.camera.transform:inverseTransformPoint(SCR.xOy_m:inverseTransformPoint(SCR.xOy:transformPoint(x,y)))
         p:mouseDown(x,y,tid)
-    elseif SETTINGS.system.touchControl then
+    elseif CONF.system.touchControl then
         VCTRL.press(x,y,tid)
     end
 end
@@ -330,7 +330,7 @@ function GAME.cursorMove(x,y,dx,dy,tid,id)
             IsMouseDown(2) and 2 or
             3
         )
-    elseif SETTINGS.system.touchControl then
+    elseif CONF.system.touchControl then
         VCTRL.move(x,y,tid)
     end
 end
@@ -340,7 +340,7 @@ function GAME.cursorUp(x,y,tid,id)
     if p.gameMode=='acry' then
         x,y=GAME.camera.transform:inverseTransformPoint(SCR.xOy_m:inverseTransformPoint(SCR.xOy:transformPoint(x,y)))
         p:mouseUp(x,y,tid)
-    elseif SETTINGS.system.touchControl then
+    elseif CONF.system.touchControl then
         VCTRL.release(tid)
     end
 end
@@ -485,7 +485,7 @@ function GAME.render()
 end
 
 function GAME._addHitWave(x,y,power)
-    if SETTINGS.system.hitWavePower<=0 then return end
+    if CONF.system.hitWavePower<=0 then return end
     if #GAME.hitWaves>=8 then
         local maxI=1
         for i=2,#GAME.hitWaves do
@@ -501,7 +501,7 @@ function GAME._addHitWave(x,y,power)
         nil,
         nil, -- power1 & power2, calculated before sending uniform
         time=0,
-        power=power*SETTINGS.system.hitWavePower,
+        power=power*CONF.system.hitWavePower,
     })
 end
 
