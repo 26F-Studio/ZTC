@@ -2125,7 +2125,7 @@ function BP.new(remote)
         -- Special
         extraSolidCheck={}, -- Manually called
     }
-    self.soundEvent=setmetatable({},GameSndFunc)
+    self.soundEvent=setmetatable({},GAME.sndFunc)
 
     ---@class Techmino.PlayerStatTable.Brik: Techmino.PlayerStatTable
     self.stat={
@@ -2208,7 +2208,7 @@ function BP:unserialize_custom()
     self.field._width=f._width
     self.field._matrix=f._matrix
 
-    setmetatable(self.soundEvent,GameSndFunc)
+    setmetatable(self.soundEvent,GAME.sndFunc)
 end
 
 --------------------------------------------------------------

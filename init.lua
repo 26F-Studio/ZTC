@@ -157,10 +157,48 @@ local GAME={
 
 GAME.camera.moveSpeed=12
 
+-- Basic sound events, this should be modified according to specific game designs
+GAME.sndFunc={__metatable=true}
+GAME.sndFunc.__index=GAME.sndFunc
+for _,v in next,{
+    'move','move_down','move_failed',
+    'touch','lock','tuck',
+    'rotate','rotate_init','rotate_locked','rotate_corners','rotate_failed','rotate_special',
+    'hold','hold_init',
+    'drop','tech','clear_all',
+    'suffocate','desuffocate',
+    'finish_win','finish_suffocate','finish_lockout','finish_topout',
+    'finish_timeout','finish_rule','finish_exhaust','finish_taskfail','finish_other',
+    'beep_rise','beep_drop','beep_notice',
+} do GAME.sndFunc[v]=function(vol) SFX.play(v,vol) end end
+function GAME.sndFunc.countDown(num) SFX.play('countdown_'..MATH.clamp(num,1,3)) end
+function GAME.sndFunc.clear(lines) SFX.play('clear_'..MATH.clamp(lines,1,5)) end
+function GAME.sndFunc.spin(lines) SFX.play('spin_'..MATH.clamp(lines,0,3)) end
+function GAME.sndFunc.combo(num) SFX.play('combo_'..MATH.clamp(num,1,10)) end
+
+GAME.regFtoS,GAME.regStoF={},{}
+---Flatten a table of functions into string-to-function and function-to-string maps
+---@param obj table | function
+---@param path string
+function GAME.regFunc(obj,path)
+    if type(obj)=='function' or type(obj)=='table' and rawget(obj,'__register') then
+        GAME.regFtoS[obj]=path
+        GAME.regStoF[path]=obj
+    elseif type(obj)=='table' then
+        for k,v in next,obj do
+            if k~='__index' then
+                GAME.regFunc(v,path.."."..k)
+            end
+        end
+    end
+end
+
+GAME.regFunc(GAME.sndFunc,'GAME.sndFunc')
+
 function GAME._refresh()
     TABLE.clear(modeLib)
     TABLE.update(mechLib,TABLE.linkSource({},require'mechanicLib',function(path) return FILE.load(path,'-lua') end,true))
-    RegFuncLib(mechLib,'mechLib')
+    GAME.regFunc(mechLib,'mechLib')
 end
 GAME._refresh()
 
@@ -201,7 +239,7 @@ function GAME.load(mode,seed)
         assert(type(M.resultPage)=='function',"[mode].resultPage must be function")
         for _,plyType in next,{'brik','gela','acry'} do
             if M.settings[plyType] then
-                RegFuncLib(M.settings[plyType].event,mode)
+                GAME.regFunc(M.settings[plyType].event,mode)
             end
         end
         M.name=mode

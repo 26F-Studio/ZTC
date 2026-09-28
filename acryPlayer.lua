@@ -771,7 +771,7 @@ function AP.new(remote)
         drawInField={},
         drawOnPlayer={},
     }
-    self.soundEvent=setmetatable({},GameSndFunc)
+    self.soundEvent=setmetatable({},GAME.sndFunc)
 
     ---@class Techmino.PlayerStatTable.Acry: Techmino.PlayerStatTable
     self.stat={
@@ -825,7 +825,7 @@ function AP:initialize()
     self:loadScript(self.settings.script)
 end
 function AP:unserialize_custom()
-    setmetatable(self.soundEvent,GameSndFunc)
+    setmetatable(self.soundEvent,GAME.sndFunc)
 end
 
 --------------------------------------------------------------

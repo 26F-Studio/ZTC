@@ -1516,7 +1516,7 @@ function GP.new(remote)
         -- Other
         whenSuffocate={},
     }
-    self.soundEvent=setmetatable({},GameSndFunc)
+    self.soundEvent=setmetatable({},GAME.sndFunc)
 
     ---@class Techmino.PlayerStatTable.Gela: Techmino.PlayerStatTable
     self.stat={
@@ -1601,7 +1601,7 @@ function GP:initialize()
     self:loadScript(self.settings.script)
 end
 function GP:unserialize_custom()
-    setmetatable(self.soundEvent,GameSndFunc)
+    setmetatable(self.soundEvent,GAME.sndFunc)
 end
 
 --------------------------------------------------------------
