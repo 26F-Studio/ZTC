@@ -2,8 +2,6 @@ local require=simpRequire('ZTC.')
 Brik=require'briks'
 require'rotsys_brik'
 
-local gc=love.graphics
-
 ---@type Techmino.MechLib
 mechLib={}
 local modeLib={} ---@type Map<string | Techmino.Mode>
