@@ -1,4 +1,4 @@
-local gc=love.graphics
+local GC=GC
 
 ---@class Techmino.RectField
 ---@field _width number
@@ -71,7 +71,7 @@ function F:drawThumbnail_simp(step,size)
         for x=1,self._width do
             local c=f[y][x]
             if c then
-                gc.rectangle('fill',(x-1)*step,-y*step,size,size)
+                GC.rectangle('fill',(x-1)*step,-y*step,size,size)
             end
         end
     end
@@ -84,8 +84,8 @@ function F:drawThumbnail_color(step,size)
         for x=1,self._width do
             local c=f[y][x]
             if c then
-                gc.setColor(RGB9[c.color])
-                gc.rectangle('fill',(x-1)*step,-y*step,size,size)
+                GC.setColor(RGB9[c.color])
+                GC.rectangle('fill',(x-1)*step,-y*step,size,size)
             end
         end
     end

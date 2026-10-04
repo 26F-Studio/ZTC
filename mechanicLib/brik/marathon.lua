@@ -1,6 +1,6 @@
-local gc=love.graphics
 local floor=math.floor
-local min,max=math.min,math.max
+local max,min=math.max,math.min
+local GC=GC
 
 ---@type Map<Techmino.Event.Brik>
 local marathon={}
@@ -109,10 +109,10 @@ do -- marathon
         local md=P.modeData
         FONT.set(70)
         GC.mStr(min(P.stat.line,200),-300,-90)
-        gc.rectangle('fill',-375,-2,150,4)
+        GC.rectangle('fill',-375,-2,150,4)
         GC.mStr(md.lineTarget,-300,-5)
         FONT.set(30,'bold')
-        gc.setColor(md.level<=10 and COLOR.G or md.level<=20 and COLOR.Y or COLOR.R)
+        GC.setColor(md.level<=10 and COLOR.G or md.level<=20 and COLOR.Y or COLOR.R)
         GC.mStr(md.dispLevel,-300,70)
     end
 end
@@ -148,7 +148,7 @@ do -- hypersonic (they are variations of marathon, aren't they?)
         P:drawInfoPanel(-380,-80,160,160)
         FONT.set(70)
         GC.mStr(P.modeData.point,-300,-90)
-        gc.rectangle('fill',-375,-2,150,4)
+        GC.rectangle('fill',-375,-2,150,4)
         GC.mStr(P.modeData.target.point,-300,-5)
     end
 
@@ -449,7 +449,7 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             P:drawInfoPanel(-380,-80,160,160)
             FONT.set(70)
             GC.mStr(P.modeData.point,-300,-90)
-            gc.rectangle('fill',-375,-2,150,4)
+            GC.rectangle('fill',-375,-2,150,4)
             GC.mStr(P.modeData.target.point,-300,-5)
             GC.setAlpha(.7023)
             GC.mStr(P.modeData.point,-300+10*math.sin(P.time),-90)
@@ -525,7 +525,7 @@ do -- hypersonic (they are variations of marathon, aren't they?)
             P:drawInfoPanel(-380,-80,160,160)
             FONT.set(70)
             GC.mStr(P.modeData.point,-300,-90)
-            gc.rectangle('fill',-375,-2,150,4)
+            GC.rectangle('fill',-375,-2,150,4)
             GC.mStr(P.modeData.target.point,-300,-5)
             FONT.set(85)
             GC.setAlpha(.42+.162*math.sin(P.time/126))

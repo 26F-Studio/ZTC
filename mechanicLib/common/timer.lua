@@ -1,5 +1,5 @@
 local ins,rem=table.insert,table.remove
-local gc=love.graphics
+local GC=GC
 
 local floatMixList={.3,.7,.9,.7,.6,.5,.42,.36,.3} -- Alpha curve of 'float' timer text, right-to-left
 
@@ -9,20 +9,20 @@ local timer_drawFunc={
         P:drawInfoPanel(-380,-60,160,120)
         FONT.set(75)
         local text=("%.1f"):format(time/1000)
-        gc.setColor(COLOR.lD)
+        GC.setColor(COLOR.lD)
         GC.mStr(text,-298,-33)
         local t=time/time0
-        gc.setColor(1.7-1.7*t,3+2*t,.3)
+        GC.setColor(1.7-1.7*t,3+2*t,.3)
         GC.mStr(text,-300,-35)
     end,
     float=function(_,time,time0)
         FONT.set(100,'bold')
         local text=("%.1f"):format(time/1000)
         local alpha=MATH.listLerp(floatMixList,time/time0)
-        gc.setColor(0,0,0,alpha)
+        GC.setColor(0,0,0,alpha)
         GC.mStr(text,-2,-69,'center')
         GC.mStr(text,-1,-68,'center')
-        gc.setColor(1,1,1,alpha)
+        GC.setColor(1,1,1,alpha)
         GC.mStr(text,0,-70,'center')
     end,
 }

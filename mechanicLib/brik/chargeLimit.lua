@@ -1,8 +1,6 @@
-local gc=love.graphics
-local gc_setColor,gc_setLineWidth=gc.setColor,gc.setLineWidth
-local gc_rectangle,gc_line=gc.rectangle,gc.line
-
-local mRect=GC.mRect
+local gc_setColor,gc_setLineWidth=GC.setColor,GC.setLineWidth
+local gc_rectangle,gc_line=GC.rectangle,GC.line
+local gc_mRect=GC.mRect
 
 ---@type Map<Techmino.Event.Brik>
 local chargeLimit={}
@@ -333,7 +331,7 @@ do -- spin
                     gc_line(x+w,y,x,y+h)
                 elseif device.pow>=0 then
                     gc_setColor(styles[i].colorL)
-                    mRect('fill',x+w*.5,y+h*.5,w*device._pow/pieceDev_max,h)
+                    gc_mRect('fill',x+w*.5,y+h*.5,w*device._pow/pieceDev_max,h)
                 elseif P.time%420>=260 then
                     gc_setColor(styles[i].colorD)
                     gc_rectangle('fill',x,y,w,h)

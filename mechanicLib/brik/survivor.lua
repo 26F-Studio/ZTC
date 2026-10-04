@@ -1,6 +1,6 @@
 local floor,ceil=math.floor,math.ceil
 local max,min=math.max,math.min
-local gc=love.graphics
+local GC=GC
 
 ---@type Map<Techmino.Event.Brik>
 local survivor={}
@@ -18,13 +18,13 @@ function survivor.event_drawOnPlayer(P)
     FONT.set(30) GC.mStr(Text.target_wave,-300,15)
 
     local cd=P.modeData.waveTimer/P.modeData.curWaveTime
-    gc.setLineWidth(10)
-    gc.setColor(COLOR.DL)
-    gc.arc('line','open',-300,130,40,-MATH.pi*.5,cd*MATH.tau-MATH.pi*.5)
-    gc.setLineWidth(3)
-    gc.setColor(COLOR.lD)
-    gc.circle('line',-300,130,32)
-    gc.circle('line',-300,130,48)
+    GC.setLineWidth(10)
+    GC.setColor(COLOR.DL)
+    GC.arc('line','open',-300,130,40,-MATH.pi*.5,cd*MATH.tau-MATH.pi*.5)
+    GC.setLineWidth(3)
+    GC.setColor(COLOR.lD)
+    GC.circle('line',-300,130,32)
+    GC.circle('line',-300,130,48)
 end
 
 function survivor.scattered_event_always(P)

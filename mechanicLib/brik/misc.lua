@@ -1,7 +1,7 @@
 local max,min=math.max,math.min
 local abs,floor,ceil=math.abs,math.floor,math.ceil
 local ins,rem=table.insert,table.remove
-local gc=love.graphics
+local GC=GC
 
 ---@type Map<Techmino.Event.Brik>
 local misc={}
@@ -48,13 +48,13 @@ do -- Line Clear
         end
     end
     function misc.lineClear_event_drawInField(P)
-        gc.setColor(1,1,1,.26)
-        gc.rectangle('fill',0,(P.stat.line-P.modeData.target.line)*40-2,P.settings.fieldW*40,4)
+        GC.setColor(1,1,1,.26)
+        GC.rectangle('fill',0,(P.stat.line-P.modeData.target.line)*40-2,P.settings.fieldW*40,4)
     end
     function misc.lineClear_event_drawOnPlayer(P)
         P:drawInfoPanel(-380,-60,160,120)
-        FONT.set(80) GC.mStr(P.modeData.target.line-P.stat.line,-300,-70)
-        FONT.set(30) GC.mStr(Text.target_line,-300,15)
+        FONT.set(80); GC.mStr(P.modeData.target.line-P.stat.line,-300,-70)
+        FONT.set(30); GC.mStr(Text.target_line,-300,15)
     end
 end
 
@@ -84,8 +84,8 @@ do -- coverField
     function misc.coverField_event_drawInField(P)
         local md=P.modeData
         if md._coverAlpha and md._coverAlpha>0 then
-            gc.setColor(.26,.26,.26,md._coverAlpha/2600)
-            gc.rectangle('fill',0,0,P.settings.fieldW*40,-P.settings.spawnH*40)
+            GC.setColor(.26,.26,.26,md._coverAlpha/2600)
+            GC.rectangle('fill',0,0,P.settings.fieldW*40,-P.settings.spawnH*40)
         end
     end
 end
@@ -272,12 +272,12 @@ do -- Wind
         end
     end
     function misc.wind_event_drawInField(P)
-        gc.setLineWidth(4)
-        gc.setColor(1,.626,.626,.626)
-        gc.circle('fill',P.settings.fieldW*(20+P.modeData._windStrength/100),-400,P.modeData._windStrength/60,6)
-        gc.setLineWidth(8)
-        gc.setColor(1,.942,.942,.42)
-        gc.line(P.settings.fieldW*20,-400,P.settings.fieldW*(20+P.modeData._windStrength/100),-400)
+        GC.setLineWidth(4)
+        GC.setColor(1,.626,.626,.626)
+        GC.circle('fill',P.settings.fieldW*(20+P.modeData._windStrength/100),-400,P.modeData._windStrength/60,6)
+        GC.setLineWidth(8)
+        GC.setColor(1,.942,.942,.42)
+        GC.line(P.settings.fieldW*20,-400,P.settings.fieldW*(20+P.modeData._windStrength/100),-400)
     end
 end
 
@@ -674,13 +674,13 @@ do -- Haunted
     function misc.haunted_drawInField(P)
         -- Debugging use
         local list=P.modeData.ghostLight_List
-        gc.setColor(1,1,1,.26)
+        GC.setColor(1,1,1,.26)
         for i=1,#list do
             ---@type Techmino.Mech.Brik.HauntedLight
             local c=list[i]
-            gc.print(c.lifeTimer,40*(c.x-1),-40*c.y+15)
+            GC.print(c.lifeTimer,40*(c.x-1),-40*c.y+15)
             if c.spreadTimer then
-                gc.rectangle('fill',40*(c.x-1),-40*c.y,10,10)
+                GC.rectangle('fill',40*(c.x-1),-40*c.y,10,10)
             end
         end
     end
