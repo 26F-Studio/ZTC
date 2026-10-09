@@ -352,6 +352,8 @@ end
 function P:press(act)
     self:triggerEvent('beforePress',act)
 
+    self.stat.key=self.stat.key+1
+
     if self.actions[act] and not self.keyState[act] then
         self.keyState[act]=true
         if #self.actionHistory>=self.settings.maxActionHistory then
@@ -360,8 +362,6 @@ function P:press(act)
         ins(self.actionHistory,{0,self.time,act})
         self.actions[act].press(self)
     end
-
-    self.stat.key=self.stat.key+1
 
     self:triggerEvent('afterPress',act)
 end
