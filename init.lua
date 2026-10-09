@@ -211,7 +211,33 @@ function GAME.addMode(name,path)
     modeLib[name]=path
 end
 
-function GAME.load(mode,seed)
+function GAME.getMode(name)
+    local M=modeLib[name]
+    if type(M)=='table' then return M end
+    ---@cast M string
+
+    -- Load & Cache the mode file
+    assert(love.filesystem.getInfo(M) and FILE.isSafe(M),"No mode file: "..tostring(name))
+    M=FILE.load(M,'-lua')
+    assert(type(M)=='table',"Mode file must return a table")
+    setmetatable(M,modeMeta)
+    assert(type(M.initialize)=='function',"[mode].initialize must be function")
+    assert(type(M.settings)=='table',   "[mode].settings must be table")
+    assert(type(layoutFuncs[M.layout])=='function',"[mode].layout type wrong")
+    assert(type(M.checkFinish)=='function',"[mode].checkFinish must be function")
+    assert(type(M.result)=='function',"[mode].result must be function")
+    assert(type(M.resultPage)=='function',"[mode].resultPage must be function")
+    for _,plyType in next,{'brik','gela','acry'} do
+        if M.settings[plyType] then
+            GAME.regFunc(M.settings[plyType].event,name)
+        end
+    end
+    M.name=name
+    modeLib[name]=M
+    return M
+end
+
+function GAME.load(name,seed)
     -- print("Game Loaded: "..mode.."-"..seed)
     if GAME.mode then
         MSG.log('warn',"Game is running")
@@ -222,28 +248,7 @@ function GAME.load(mode,seed)
     GAME.playerMap={}
     GAME.mainPlayer=false
     GAME.seed=seed or math.random(2^16,2^26)
-    local M=modeLib[mode]
-    if type(M)=='string' then
-        -- Load & Cache the mode file
-        assert(love.filesystem.getInfo(M) and FILE.isSafe(M),"No mode file: "..tostring(mode))
-        M=FILE.load(M,'-lua')
-        assert(type(M)=='table',"Mode file must return a table")
-        setmetatable(M,modeMeta)
-        assert(type(M.initialize)=='function',"[mode].initialize must be function")
-        assert(type(M.settings)=='table',   "[mode].settings must be table")
-        assert(type(layoutFuncs[M.layout])=='function',"[mode].layout type wrong")
-        assert(type(M.checkFinish)=='function',"[mode].checkFinish must be function")
-        assert(type(M.result)=='function',"[mode].result must be function")
-        assert(type(M.resultPage)=='function',"[mode].resultPage must be function")
-        for _,plyType in next,{'brik','gela','acry'} do
-            if M.settings[plyType] then
-                GAME.regFunc(M.settings[plyType].event,mode)
-            end
-        end
-        M.name=mode
-        modeLib[mode]=M
-    end
-    GAME.mode=M
+    GAME.mode=GAME.getMode(name)
     if GAME.mode.initialize then GAME.mode.initialize() end
     if #GAME.playerList==0 then
         MSG.log('warn',"No players created in this mode")
