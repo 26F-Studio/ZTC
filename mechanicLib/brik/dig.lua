@@ -1,7 +1,105 @@
 ---@type Map<Techmino.Event.Brik>
 local dig={}
 
+local freq={
+    neat={1,2,1,2},
+    stairs={2.6,6.2,1},
+    stairs_r={1,6.2,2.6},
+}
+local min,abs=math.min,math.abs
+local function cheeseDistCheck(r,his,w)
+    return
+        min(abs(r-his[1]),abs(r+w-his[1]))>=2 and
+        min(abs(r-his[2]),abs(r+w-his[2]))>=2 and
+        min(abs(r-his[3]),abs(r+w-his[3]))>=1 and
+        min(abs(r-his[4]),abs(r+w-his[4]))>=1
+end
 local garbageTypes={
+    neat=function(P)
+        if not P.modeData.neat then
+            P.modeData.neat={init=true,pos=0,amount=0}
+            for i=1,P.settings.fieldW do P.modeData.neat[i]=8 end
+        end
+        local d=P.modeData.neat
+        if d.amount<=0 then
+            local R=P:random('dig',P.settings.fieldW-1)
+            d.amount=P:randFreq('dig',freq.neat)
+            if R>=d.pos then R=R+1 end
+
+            local sum=0
+            for i=1,#d do
+                sum=sum+math.max(d[i],0)
+            end
+            local r0=P:random('dig',sum)
+            local r
+            for x=1,#d do
+                if d[x]>0 then
+                    r0=r0-d[x]
+                    if r0<=0 then
+                        r=x
+                        break
+                    end
+                end
+            end
+            d.pos=r or P:random('dig',P.settings.fieldW)
+
+            for x=1,P.settings.fieldW do
+                local dist=not r and 1e99 or min(abs(x-r),10-abs(x-r))
+                d[x]=MATH.clamp(d[x]+(
+                    dist==0 and -10 or
+                    dist==1 and -8 or
+                    3
+                ),-4,8)
+            end
+        end
+        P:riseGarbage(d.pos)
+        d.amount=d.amount-1
+    end,
+    stairs=function(P)
+        if not P.modeData.stairs then
+            P.modeData.stairs={
+                init=true,
+                pos=P:random('dig',2,P.settings.fieldW-1),
+                dir=P:coin('dig',-1,1),
+                amount=0,
+            }
+        end
+        local d=P.modeData.stairs
+        if d.amount<=0 then
+            d.pos=d.pos+d.dir
+            if d.pos==1 or d.pos==P.settings.fieldW then
+                d.dir=-d.dir
+            end
+            d.amount=P:randFreq('dig',(d.pos<=2 or d.pos>=P.settings.fieldW-1) and freq.stairs_r or freq.stairs)
+        end
+        P:riseGarbage(d.pos)
+        d.amount=d.amount-1
+    end,
+    cheese=function(P)
+        local md=P.modeData
+        if not md.cheeseHis then
+            md.cheeseHis={}
+            for i=1,4 do md.cheeseHis[i]=P:random('dig',P.settings.fieldW) end
+        end
+
+        local r
+        repeat
+            r=P:random('dig',P.settings.fieldW)
+        until cheeseDistCheck(r,md.cheeseHis,P.settings.fieldW)
+        md.cheeseHis[4]=nil
+        table.insert(md.cheeseHis,1,r)
+
+        P:riseGarbage(r)
+    end,
+    ruins=function(P)
+        P:riseGarbage(P:calculateHolePos(
+            8,  -- count
+            0,  -- splitRate
+            0,  -- copyRate
+            -.5 -- sandwichRate
+        ))
+    end,
+
     line=function(P)
         if not P.modeData.dig_line_init then
             P.modeData.dig_line_init=true
