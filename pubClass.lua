@@ -12,8 +12,10 @@
 
 ---@alias Techmino.EventName -- All event function will be called with format `Event(P[,see below])`
 ---| 'beforePress'     -- General(act)
+---| 'onPress'         -- General(act)
 ---| 'afterPress'      -- General(act)
 ---| 'beforeRelease'   -- General(act)
+---| 'onRelease'       -- General(act)
 ---| 'afterRelease'    -- General(act)
 ---| 'playerInit'      -- General
 ---| 'gameStart'       -- General
@@ -22,6 +24,8 @@
 ---|
 ---| 'afterResetPos'   -- Brik, Gela
 ---| 'afterSpawn'      -- Brik, Gela
+---| 'beforeMove'      -- Brik(act,A,B,C,D), Gela(act,A,B,C)
+---| 'afterMove'       -- Brik(act,A,B,C,D), Gela(act,A,B,C)
 ---| 'afterDrop'       -- Brik, Gela
 ---| 'afterLock'       -- Brik, Gela
 ---| 'beforeClear'     -- Brik(lines)

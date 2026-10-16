@@ -221,7 +221,11 @@ function BP:moveHand(action,A,B,C,D)
         rotate: x,y,dir,ifInit
         reset:  x,y
     ]]
+
+    self:triggerEvent('beforeMove',action,A,B,C,D)
+
     ins(self.hand.path,{action,A,B,C,D}) -- Track movement
+
     local SET=self.settings
     if action=='moveX' then
         self.handX=self.handX+A
@@ -351,6 +355,8 @@ function BP:moveHand(action,A,B,C,D)
     self.lastMovement=movement
 
     self:tryCancelSuffocate()
+
+    self:triggerEvent('afterMove',action,A,B,C,D)
 end
 function BP:restoreBrikState(brik) -- Restore a brik object's state (only inside, like shape, name, direction)
     if not brik then brik=self.hand end
@@ -2088,8 +2094,10 @@ function BP.new(remote)
     self.event={
         -- Press & Release
         beforePress={},
+        onPress={},
         afterPress={},
         beforeRelease={},
+        onRelease={},
         afterRelease={},
 
         -- Start & End
@@ -2100,6 +2108,8 @@ function BP.new(remote)
         -- Drop
         afterResetPos={},
         afterSpawn={},
+        beforeMove={},
+        afterMove={},
         afterDrop={},
         afterLock={},
         beforeClear={},

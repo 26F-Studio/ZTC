@@ -750,8 +750,10 @@ function AP.new(remote)
     self.event={
         -- Press & Release
         beforePress={},
+        onPress={},
         afterPress={},
         beforeRelease={},
+        onRelease={},
         afterRelease={},
 
         -- Start & End

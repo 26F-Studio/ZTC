@@ -360,6 +360,7 @@ function P:press(act)
             rem(self.actionHistory,1)
         end
         ins(self.actionHistory,{0,self.time,act})
+        self:triggerEvent('onPress',act)
         self.actions[act].press(self)
     end
 
@@ -374,6 +375,7 @@ function P:release(act)
             rem(self.actionHistory,1)
         end
         ins(self.actionHistory,{1,self.time,act})
+        self:triggerEvent('onRelease',act)
         self.actions[act].release(self)
     end
 

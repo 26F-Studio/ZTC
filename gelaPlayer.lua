@@ -124,6 +124,9 @@ function GP:moveHand(action,A,B,C)
         rotate: x,y,ifInit
         reset:  x,y
     ]]
+
+    self:triggerEvent('beforeMove',action,A,B,C)
+
     if action=='moveX' then
         self.handX=self.handX+A
         self:checkLanding()
@@ -189,6 +192,8 @@ function GP:moveHand(action,A,B,C)
     end
 
     self:tryCancelSuffocate()
+
+    self:triggerEvent('afterMove',action,A,B,C)
 end
 function GP:restoreGelaState(gela) -- Restore a gela object's state (only inside, like shape, name, direction)
     if gela._origin then
@@ -1484,8 +1489,10 @@ function GP.new(remote)
     self.event={
         -- Press & Release
         beforePress={},
+        onPress={},
         afterPress={},
         beforeRelease={},
+        onRelease={},
         afterRelease={},
 
         -- Start & End
@@ -1496,6 +1503,8 @@ function GP.new(remote)
         -- Drop
         afterResetPos={},
         afterSpawn={},
+        beforeMove={},
+        afterMove={},
         afterDrop={},
         afterLock={},
         afterClear={},
