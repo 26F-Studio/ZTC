@@ -1,34 +1,118 @@
-local ins=table.insert
-
-local finesseData={
+local book={
     Z={
-        [0]={1,2,1,0,1,-2,2,1},
-        [1]={2,2,2,1,1,2,3,2,2},
+        [0]={
+            {'['},
+            {'<<','[>'},
+            {'<'},
+            {''},
+            {'>'},
+            {'>>'},
+            {']<'},
+            {']'},
+        },
+        [1]={
+            {'A['},
+            {'[,R'},
+            {'L<'},
+            {'L'},
+            {'R'},
+            {'R>'},
+            {'R>>','],L<'},
+            {'],L'},
+            {'A]'},
+        },
     },
     J={
-        [0]={1,2,1,0,1,-2,2,1},
-        [1]={2,2,3,2,1,2,3,3,2},
-        [2]={3,4,3,2,3,-4,4,3},
-        [3]={2,3,2,1,2,3,3,2,2},
+        [0]={
+            {'['},
+            {'<<','[>'},
+            {'<'},
+            {''},
+            {'>'},
+            {'>>'},
+            {']<'},
+            {']'},
+        },
+        [1]={
+            {'R['},
+            {'[,R'},
+            {'[,R>','R<<'},
+            {'R<'},
+            {'R'},
+            {'R>'},
+            {'R>>'},
+            {'R]<'},
+            {'R]'},
+        },
+        [2]={
+            {'F['},
+            {'F<<','F[>'},
+            {'F<'},
+            {'F'},
+            {'F>'},
+            {'F>>'},
+            {'F]<'},
+            {'F]'},
+        },
+        [3]={
+            {'L['},
+            {'L[>'},
+            {'L<'},
+            {'L'},
+            {'L>'},
+            {'L>>'},
+            {'],L<'},
+            {'],L'},
+            {'L]'},
+        },
     },
     O={
-        [0]={1,2,-2,1,0,1,-2,2,1},
+        [0]={
+            {'['},
+            {'[>'},
+            {'<<'},
+            {'<'},
+            {''},
+            {'>'},
+            {'>>'},
+            {']<'},
+            {']'},
+        },
     },
     I={
-        [0]={1,2,1,0,1,2,1},
-        [1]={2,2,2,-2,1,1,-2,2,2,2},
+        [0]={
+            {'['},
+            {'[>','<<'},
+            {'<'},
+            {''},
+            {'>'},
+            {']<','>>'},
+            {']'},
+        },
+        [1]={
+            {'A['},
+            {'[,L'},
+            {'[,R'},
+            {'<R'},
+            {'L'},
+            {'R'},
+            {'<L'},
+            {'],L'},
+            {'],R'},
+            {'A]'},
+        },
     },
 }
-finesseData.Z[2]=finesseData.Z[0]
-finesseData.Z[3]=finesseData.Z[1]
-finesseData.O[1]=finesseData.O[0]
-finesseData.O[2]=finesseData.O[0]
-finesseData.O[3]=finesseData.O[0]
-finesseData.I[2]=finesseData.I[0]
-finesseData.I[3]=finesseData.I[1]
-finesseData.S=finesseData.Z
-finesseData.L=finesseData.J
-finesseData.T=finesseData.J
+book.Z[2]=book.Z[0]
+book.Z[3]=book.Z[1]
+book.O[1]=book.O[0]
+book.O[2]=book.O[0]
+book.O[3]=book.O[0]
+book.I[2]=book.I[0]
+book.I[3]=book.I[1]
+book.S=book.Z
+book.L=book.J
+book.T=book.J
 
 ---@type Map<Techmino.Event.Brik>
 local finesse={}
@@ -41,7 +125,7 @@ function finesse.event_playerInit(P)
     P.modeData.fault=0             -- Fault count
     P.modeData.overCnt=0           -- Extra moves count
 
-    P.modeData.movHis={}           -- Current piece move history (count)
+    P.modeData.movSeq=''           -- Current piece move history (count)
     P.modeData.movCnt=0            -- Total moves/rotations
     -- P.stat.spawn                -- Total spawns
     P.modeData.neatPiece=0         -- Open-air drops
@@ -56,21 +140,37 @@ function finesse.event_playerInit(P)
 end
 
 function finesse.event_afterResetPos(P)
-    TABLE.clear(P.modeData.movHis)
     if P.keyState.moveLeft~=P.keyState.moveRight then
-        ins(P.modeData.movHis,P.keyState.moveLeft and '<' or '>') -- pre-charged
+        P.modeData.movSeq='!' -- pre-charged
     end
 end
 function finesse.event_beforeMove(P,act,A,B,C,D)
+    --[[
+        moveX:  dx,noShade,byAutoShift,ifInit
+        moveY:  dy,noShade
+        drop:   dy,noShade
+        rotate: x,y,dir,ifInit
+        reset:  x,y
+    ]]
+    local md=P.modeData
     if act=='rotate' then
-        ins(P.modeData.movHis,
-            C=='R' and 'r' or
-            C=='L' and 'l' or
-            C=='F' and 'f' or
+        md.movSeq=md.movSeq..(
+            C=='R' and 'R' or
+            C=='L' and 'L' or
+            C=='F' and 'F' or
             error("WTF")
         )
-    elseif act=='moveX' and not C then
-        ins(P.modeData.movHis, A<0 and '[' or ']')
+    elseif act=='moveX' then
+        if C then
+            local tail=md.movSeq:sub(-1)
+            if tail=='<' or tail=='>' then
+                md.movSeq=md.movSeq:sub(1,-2)..(tail=='<' and '[' or ']')
+            end
+        else
+            md.movSeq=md.movSeq..(A<0 and '<' or '>')
+        end
+    elseif act=='reset' then
+        P.modeData.movSeq=''
     end
 end
 
@@ -88,19 +188,15 @@ function finesse.event_afterDrop(P)
     local md=P.modeData
     if fine then
         local piece=P.hand.name
+        if not book[piece] then return end
         local x=P.handX
         local dir=P.hand.direction
-        local move=#md.movHis
-        local par=finesseData[piece][dir][x]
-        if par<0 then
-            par=-par
-            if md.movHis[1]=='<' or md.movHis[1]=='>' then
-                move=move-1
-            end
-        end
-        if md.force180 and dir==2 and (piece=='J' or piece=='L' or piece=='T') then
-            par=par-1
-        end
+        local move=#md.movSeq
+        local ansList=book[piece][dir][x]
+        local par=#ansList[1]
+        if ansList[1]:find(',') then par=par-1 end
+        if md.movSeq:sub(1,1)=='!' then par=par+1 end
+        if not md.force180 and dir==2 and (piece=='J' or piece=='L' or piece=='T') then par=par+1 end
         if move>par then
             md.fault=md.fault+1
             md.overCnt=md.overCnt+(move-par)
@@ -108,9 +204,8 @@ function finesse.event_afterDrop(P)
         end
 
         md.neatPiece=md.neatPiece+1
-        if #md.movHis>0 then
-            md.movCnt=md.movCnt+#md.movHis
-            TABLE.clear(md.movHis)
+        if #md.movSeq>0 then
+            md.movCnt=md.movCnt+#md.movSeq
         end
     end
 end
