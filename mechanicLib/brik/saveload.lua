@@ -1,14 +1,16 @@
 ---@type Map<Techmino.Event.Brik>
-local sl={}
+local saveload={}
 
-function sl.event_playerInit(P)
+function saveload.event_playerInit(P)
     local md=P.modeData
     md.undoData={}
-    P:setAction('func1',sl.action_load)
-    P:addEvent('afterSpawn',sl.event_afterSpawn)
-    P:addEvent('beforeDiscard',sl.event_beforeDiscard)
-    P:addEvent('drawOnPlayer',sl.event_drawOnPlayer)
-    P:addEvent('afterClear',sl.event_afterClear)
+    P:setAction('func1',saveload.action_load)
+    P:addEvent('afterSpawn',saveload.event_afterSpawn)
+    P:addEvent('beforeDiscard',saveload.event_beforeDiscard)
+    P:addEvent('drawOnPlayer',saveload.event_drawOnPlayer)
+    P:addEvent('afterClear',saveload.event_afterClear)
+    P.modeData.onBeforeLoad=NULL -- Callback before undo happens
+    P.modeData.onAfterLoad=NULL  -- Callback after undo happens
 
     md.undoInfo={
         time=0,               -- total undo count
@@ -17,21 +19,24 @@ function sl.event_playerInit(P)
     }
     md.undoDepthLimit=6
 end
-function sl.action_load(P)
+function saveload.action_load(P)
     local md=P.modeData
     if md.undoInfo.depth>md.undoDepthLimit then return end
     if #md.undoData>1 and P.hand then
-        -- Snapshot values
+        -- Snapshot
         local undoData,undoInfo=md.undoData,md.undoInfo
         md.undoData,md.undoInfo=nil,nil
+        local customData
+        customData=P.modeData.onBeforeLoad(P)
 
         local gameTime=P.gameTime
         table.remove(undoData)
         P:unserialize(undoData[#undoData])
         md=P.modeData
 
-        -- Restore snapshot values
+        -- Restore snapshot
         md.undoData,md.undoInfo=undoData,undoInfo
+        P.modeData.onAfterLoad(P,customData)
 
         -- Update undo info
         md.undoInfo.time=md.undoInfo.time+1
@@ -40,6 +45,7 @@ function sl.action_load(P)
         P.gameTime=gameTime
         P.fieldRisingSpeed=0
         P.fieldDived=0
+
         P:release('moveLeft'); P:release('moveRight')
         P:release('rotateCW'); P:release('rotateCCW'); P:release('rotate180')
         P:release('holdPiece'); P:release('softDrop'); P:release('hardDrop')
@@ -50,7 +56,7 @@ function sl.action_load(P)
         -- print('SL: loaded',#undoData)
     end
 end
-function sl.event_afterSpawn(P)
+function saveload.event_afterSpawn(P)
     local md=P.modeData
     if P.hand then
         local undoData,undoInfo=md.undoData,md.undoInfo
@@ -63,16 +69,16 @@ function sl.event_afterSpawn(P)
         -- print('SL: saved',#undoData)
     end
 end
-function sl.event_beforeDiscard(P)
+function saveload.event_beforeDiscard(P)
     local md=P.modeData
     md.undoInfo.depth=math.max(md.undoInfo.depth-1,0)
 end
-function sl.event_afterClear(P)
+function saveload.event_afterClear(P)
     local md=P.modeData
     if not md.undoInfo.confirmOnClear then return end
     TABLE.clear(md.undoData)
 end
-function sl.event_drawOnPlayer(P)
+function saveload.event_drawOnPlayer(P)
     local md=P.modeData
     if #md.undoData>1 then
         GC.setColor(1,1,1,.26)
@@ -82,4 +88,4 @@ function sl.event_drawOnPlayer(P)
     GC.rectangle('line',-380,326,160,26)
 end
 
-return sl
+return saveload
