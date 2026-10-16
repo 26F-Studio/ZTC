@@ -922,14 +922,14 @@ function BP:calculateHolePos(count,splitRate,copyRate,sandwichRate)
 end
 function BP:moveLeft(ifInit)
     if not self:ifoverlap(self.hand.matrix,self.handX-1,self.handY) then
-        self:moveHand('moveX',-1,true)
+        self:moveHand('moveX',-1,true,false,ifInit)
         if not ifInit then self:freshGhost() end
         return true
     end
 end
 function BP:moveRight(ifInit)
     if not self:ifoverlap(self.hand.matrix,self.handX+1,self.handY) then
-        self:moveHand('moveX',1,true)
+        self:moveHand('moveX',1,true,false,ifInit)
         if not ifInit then self:freshGhost() end
         return true
     end
