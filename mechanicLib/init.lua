@@ -18,6 +18,7 @@ local mechLib={
         attackSys=require'brik/attackSys',
         stack=require'brik/stack',
         squeeze=require'brik/squeeze',
+        saveload=require'brik/saveload',
         finesse=require'brik/finesse',
         misc=require'brik/misc',
 
