@@ -2074,7 +2074,6 @@ local baseEnv={
     IRSpushUp=true, -- Use bottom-align when IRS or suffocate
     strictLockout=false, -- Lockout causes game over
     script=false,
-    allowTransform=true,
     skin='brik_template',
     particles=true,
     shakeness=.26,

@@ -126,7 +126,7 @@ TRS[6]={
         if not self.deathTimer then
             local dx,dy=0,0
             if
-                self.settings.allowTransform and
+                not self.modeData.noOspin and
                 (
                     baseY==self.ghostY and
                     self:ifoverlap(self.hand.matrix,baseX-1,self.handY) and
