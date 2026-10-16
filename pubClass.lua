@@ -183,6 +183,15 @@
 ---@field resultPage fun(time:number) Drawing the result page
 ---@field name string Mode name, for debug use
 
+---@class Techmino.ModeInput
+---@field initialize? function
+---@field settings? {brik:Techmino.Mode.Setting.Brik?, gela:Techmino.Mode.Setting.Gela?, acry:Techmino.Mode.Setting.Acry?}
+---@field layout? 'default'
+---@field checkFinish? function
+---@field result? function
+---@field resultPage? fun(time:number)
+---@field name? string
+
 ---@class Techmino.PlayerModeData
 ---@field subMode string
 ---@field music Techmino.PlayerModeData.MusicTable
