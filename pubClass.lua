@@ -59,10 +59,10 @@
 ---@field trail love.ParticleSystem
 ---@field exMapBack love.ParticleSystem
 
----@alias Techmino.Event string | {[1]:number, [2]:fun(P:Techmino.Player): ...} | fun(P:Techmino.Player): ...
----@alias Techmino.Event.Brik string | {[1]:number, [2]:fun(P:Techmino.Player.Brik): ...} | fun(P:Techmino.Player.Brik): ...
----@alias Techmino.Event.Gela string | {[1]:number, [2]:fun(P:Techmino.Player.Gela): ...} | fun(P:Techmino.Player.Gela): ...
----@alias Techmino.Event.Acry string | {[1]:number, [2]:fun(P:Techmino.Player.Acry): ...} | fun(P:Techmino.Player.Acry): ...
+---@alias Techmino.Event string | {[1]:number, [2]:fun(P:Techmino.Player, ...): boolean?} | fun(P:Techmino.Player, ...): boolean?
+---@alias Techmino.Event.Brik string | {[1]:number, [2]:fun(P:Techmino.Player.Brik, ...): boolean?} | fun(P:Techmino.Player.Brik, ...): boolean?
+---@alias Techmino.Event.Gela string | {[1]:number, [2]:fun(P:Techmino.Player.Gela, ...): boolean?} | fun(P:Techmino.Player.Gela, ...): boolean?
+---@alias Techmino.Event.Acry string | {[1]:number, [2]:fun(P:Techmino.Player.Acry, ...): boolean?} | fun(P:Techmino.Player.Acry, ...): boolean?
 
 
 
