@@ -191,9 +191,6 @@ function finesse.event_afterDrop(P)
         local piece=P.hand.name
         if not book[piece] then return end
 
-        md.neatPiece=md.neatPiece+1
-        if #md.movSeq>0 then md.movCnt=md.movCnt+#md.movSeq end
-
         local x=P.handX
         local dir=P.hand.direction
         local move=#md.movSeq
@@ -203,13 +200,17 @@ function finesse.event_afterDrop(P)
         if md.movSeq:sub(1,1)=='!' then par=par+1 end
         if not md.force180 and ansList[1]:find('F') then par=par+1 end
         if move>par then
+            md.onFinesseFault(P)
+            if not P.hand then return end
             md.fault=md.fault+1
             md.overCnt=md.overCnt+(move-par)
             md.refAns=TABLE.copy(ansList)
-            md.onFinesseFault(P)
         else
             md.refAns=false
         end
+
+        md.neatPiece=md.neatPiece+1
+        if #md.movSeq>0 then md.movCnt=md.movCnt+#md.movSeq end
     end
 end
 
