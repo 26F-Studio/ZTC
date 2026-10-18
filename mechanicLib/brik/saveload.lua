@@ -9,8 +9,8 @@ function saveload.event_playerInit(P)
     P:addEvent('beforeDiscard',saveload.event_beforeDiscard)
     P:addEvent('drawOnPlayer',saveload.event_drawOnPlayer)
     P:addEvent('afterClear',saveload.event_afterClear)
-    P.modeData.onBeforeLoad=NULL -- Callback before undo happens
-    P.modeData.onAfterLoad=NULL  -- Callback after undo happens
+    P.modeData.onBeforeLoad=NULL -- Callback before undo happens, could return [custom data]
+    P.modeData.onAfterLoad=NULL  -- Callback after undo happens, will receive the [custom data]
 
     md.undoInfo={
         time=0,               -- total undo count

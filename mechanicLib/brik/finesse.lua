@@ -131,6 +131,7 @@ function finesse.event_playerInit(P)
     P.modeData.neatPiece=0         -- Open-air drops
     P.modeData.mpp=0               -- Moves per piece (open-air drops only, hard drop counts but hold doesn't, measures placement quality)
     P.modeData.dropRate='100%'     -- Open-air drop rate
+    P.modeData.refAns=false        -- Reference answer list of last drop (after fault)
     P.modeData.onFinesseFault=NULL -- Callback for finesse fault
 
     P:addEvent('afterResetPos',finesse.event_afterResetPos)
@@ -204,8 +205,10 @@ function finesse.event_afterDrop(P)
         if move>par then
             md.fault=md.fault+1
             md.overCnt=md.overCnt+(move-par)
-            md.refAns=ansList
+            md.refAns=TABLE.copy(ansList)
             md.onFinesseFault(P)
+        else
+            md.refAns=false
         end
     end
 end
