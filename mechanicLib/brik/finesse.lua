@@ -198,7 +198,7 @@ function finesse.event_afterDrop(P)
         local par=#ansList[1]
         if ansList[1]:find(',') then par=par-1 end
         if md.movSeq:sub(1,1)=='!' then par=par+1 end
-        if not md.force180 and ansList[1]:find('F') then par=par+1 end
+        if not md.force180 and ansList[1]:find('F') and not md.movSeq:find('F') then par=par+1 end
         if move>par then
             md.refAns=TABLE.copy(ansList)
             md.onFinesseFault(P)
