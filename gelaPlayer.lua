@@ -130,25 +130,23 @@ function GP:moveHand(action,A,B,C)
     if action=='moveX' then
         self.handX=self.handX+A
         self:checkLanding()
-        if self.settings.particles then
+        if not B and self.settings.effect_move then
             local hx,hy=self.handX,self.handY
             local mat=self.hand.matrix
             local w,h=#mat[1],#mat
-            if not B then
-                if A<0 then
-                    for y=1,h do for x=w,1,-1 do
-                        if mat[y][x] then
-                            self:createMoveEffect(hx+x-1+1,hy+y-1,hx+x-1+1-A-1,hy+y-1)
-                            break
-                        end end
-                    end
-                elseif A>0 then
-                    for y=1,h do for x=1,w do
-                        if mat[y][x] then
-                            self:createMoveEffect(hx+x-1-1,hy+y-1,hx+x-1-1-A+1,hy+y-1)
-                            break
-                        end end
-                    end
+            if A<0 then
+                for y=1,h do for x=w,1,-1 do
+                    if mat[y][x] then
+                        self:createMoveEffect(hx+x-1+1,hy+y-1,hx+x-1+1-A-1,hy+y-1)
+                        break
+                    end end
+                end
+            elseif A>0 then
+                for y=1,h do for x=1,w do
+                    if mat[y][x] then
+                        self:createMoveEffect(hx+x-1-1,hy+y-1,hx+x-1-1-A+1,hy+y-1)
+                        break
+                    end end
                 end
             end
         end
@@ -156,7 +154,7 @@ function GP:moveHand(action,A,B,C)
         self.handY=self.handY+A
         self.dropTimer=self.settings.dropDelay
         self:checkLanding(true)
-        if self.settings.particles then
+        if self.settings.effect_move then
             local hx,hy=self.handX,self.handY
             local mat=self.hand.matrix
             local w,h=#mat[1],#mat
@@ -262,7 +260,9 @@ function GP:resetPosCheck()
 
             if self.deathTimer then
                 self:playSound('suffocate')
-                self:createSuffocateEffect()
+                if SET.effect_suffocate then
+                    self:createSuffocateEffect()
+                end
             end
         else
 
@@ -356,7 +356,9 @@ function GP:tryCancelSuffocate()
         else
             self.deathTimer=false
             self:playSound('desuffocate')
-            self:createDesuffocateEffect()
+            if self.settings.effect_suffocate then
+                self:createDesuffocateEffect()
+            end
         end
     end
 end
@@ -639,7 +641,7 @@ function GP:gelaDropped() -- Drop & lock gela, and trigger a lot of things
         self:shakeBoard('-drop',1)
         self:playSound('drop')
     end
-    if self.settings.particles then
+    if self.settings.effect_drop then
         self:createPieceDropEffect()
     end
 
@@ -899,7 +901,7 @@ function GP:doClear()
                 k=false
             end
             F:setCell(k,pos[1],pos[2])
-            if self.settings.particles then
+            if self.settings.effect_clear then
                 self:createClearEffect(pos[1],pos[2])
             end
         end
@@ -1477,7 +1479,11 @@ local baseEnv={
     script=false,
     IRSpushUp=true,
     skin='gela_template',
-    particles=true,
+    effect_move=true,
+    effect_move_fail=true,
+    effect_drop=true,
+    effect_clear=true,
+    effect_suffocate=true,
     shakeness=.26,
     inputDelay=0,
 }

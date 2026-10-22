@@ -230,25 +230,23 @@ function BP:moveHand(action,A,B,C,D)
     if action=='moveX' then
         self.handX=self.handX+A
         self:checkLanding()
-        if SET.particles then
+        if not B and SET.effect_move then
             local hx,hy=self.handX,self.handY
             local mat=self.hand.matrix
             local w,h=#mat[1],#mat
-            if not B then
-                if A<0 then
-                    for y=1,h do for x=w,1,-1 do
-                        if mat[y][x] then
-                            self:createMoveEffect(hx+x-1+1,hy+y-1,hx+x-1+1-A-1,hy+y-1)
-                            break
-                        end end
-                    end
-                elseif A>0 then
-                    for y=1,h do for x=1,w do
-                        if mat[y][x] then
-                            self:createMoveEffect(hx+x-1-1,hy+y-1,hx+x-1-1-A+1,hy+y-1)
-                            break
-                        end end
-                    end
+            if A<0 then
+                for y=1,h do for x=w,1,-1 do
+                    if mat[y][x] then
+                        self:createMoveEffect(hx+x-1+1,hy+y-1,hx+x-1+1-A-1,hy+y-1)
+                        break
+                    end end
+                end
+            elseif A>0 then
+                for y=1,h do for x=1,w do
+                    if mat[y][x] then
+                        self:createMoveEffect(hx+x-1-1,hy+y-1,hx+x-1-1-A+1,hy+y-1)
+                        break
+                    end end
                 end
             end
         end
@@ -256,7 +254,7 @@ function BP:moveHand(action,A,B,C,D)
         self.handY=self.handY+A
         self.dropTimer=SET.dropDelay
         self:checkLanding(true,true)
-        if SET.particles then
+        if SET.effect_move then
             local hx,hy=self.handX,self.handY
             local mat=self.hand.matrix
             local w,h=#mat[1],#mat
@@ -296,14 +294,14 @@ function BP:moveHand(action,A,B,C,D)
 
     if action=='moveX' then
         if
-            not self.ghostState and
             C and
+            not self.ghostState and
             (self.lastMovement.action=='moveY' or self.lastMovement.action=='drop') and
             self:ifoverlap(self.hand.matrix,self.handX,self.handY-1) and
             self:ifoverlap(self.hand.matrix,self.handX,self.handY+1)
         then
             self:playSound('tuck')
-            if SET.particles then
+            if SET.effect_tuck then
                 self:createTuckEffect()
             end
         end
@@ -320,7 +318,7 @@ function BP:moveHand(action,A,B,C,D)
                 movement.immobile=true
                 self:shakeBoard(C=='L' and '-ccw' or C=='R' and '-cw' or '-180')
                 self:playSound('rotate_locked')
-                if SET.particles then
+                if SET.effect_spin_immobile then
                     self:createHandErrorEffect(.942,1,1)
                 end
             end
@@ -339,7 +337,7 @@ function BP:moveHand(action,A,B,C,D)
                         if corners>=SET.spin_corners then
                             movement.corners=true
                             self:playSound('rotate_corners')
-                            if SET.particles then
+                            if SET.effect_spin_corners then
                                 self:createRotateCornerEffect(cx,cy)
                             end
                         end
@@ -348,7 +346,7 @@ function BP:moveHand(action,A,B,C,D)
             end
         end
         self:playSound(D and 'rotate_init' or 'rotate')
-        if SET.particles then
+        if SET.effect_rotate then
             self:createRotateEffect(C,D)
         end
     end
@@ -433,7 +431,7 @@ function BP:resetPosCheck()
 
             if self.deathTimer then
                 self:playSound('suffocate')
-                if SET.particles then
+                if SET.effect_suffocate then
                     self:createSuffocateEffect()
                 end
             end
@@ -529,7 +527,7 @@ function BP:tryCancelSuffocate()
         else
             self.deathTimer=false
             self:playSound('desuffocate')
-            if self.settings.particles then
+            if self.settings.effect_suffocate then
                 self:createDesuffocateEffect()
             end
         end
@@ -835,7 +833,7 @@ function BP:checkLanding(sparkles,drop)
         if drop then
             self:playSound('touch')
         end
-        if sparkles and self.settings.particles then
+        if sparkles and self.settings.effect_touch then
             self:createTouchEffect()
         end
     end
@@ -1002,7 +1000,7 @@ function BP:rotate(dir,ifInit)
             end
             if not ifInit then self:freshDelay('rotate') end
             self:playSound('rotate_failed')
-            if self.settings.particles then
+            if self.settings.effect_move_fail then
                 self:createHandErrorEffect(1,.26,.26)
             end
         else
@@ -1014,7 +1012,7 @@ end
 function BP:hold(ifInit)
     if self.holdTime>=self.settings.holdSlot and not self.settings.infHold or self.settings.holdSlot==0 then return end
 
-    if self.settings.particles then
+    if self.settings.effect_hold then
         self:createHoldEffect(ifInit)
     end
     if self.settings.stopMoveWhenHold then
@@ -1100,7 +1098,7 @@ function BP:doClear(fullLines)
     ins(self.clearHistory,his)
     self:shakeBoard('-clear',n)
     self:playSound('clear',n)
-    if self.settings.particles then
+    if self.settings.effect_clear then
         self:createFrenzyEffect(min(n^2*6,260))
     end
 
@@ -1136,10 +1134,8 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
     self:triggerEvent('afterDrop')
     if not self.hand or self.finished then return end
 
-    if SET.particles then
-        self:createPieceDropEffect()
-        self:createHandLockEffect()
-    end
+    if SET.effect_drop then self:createPieceDropEffect() end
+    if SET.effect_lock then self:createHandLockEffect() end
 
     -- Lock to field
     self:lock()
@@ -1539,7 +1535,7 @@ function BP:tickStep()
                         if self.handY==self.ghostY then
                             self:shakeBoard('-down')
                         end
-                        if self.settings.particles then
+                        if self.settings.effect_touch then
                             self:createTouchEffect()
                         end
                     end
@@ -2075,7 +2071,18 @@ local baseEnv={
     strictLockout=false, -- Lockout causes game over
     script=false,
     skin='brik_template',
-    particles=true,
+    effect_move=true,
+    effect_rotate=true,
+    effect_spin_immobile=true,
+    effect_spin_corners=true,
+    effect_move_fail=true,
+    effect_tuck=true,
+    effect_drop=true,
+    effect_touch=true,
+    effect_lock=true,
+    effect_clear=true,
+    effect_hold=true,
+    effect_suffocate=true,
     shakeness=.26,
     inputDelay=0,
     palette={

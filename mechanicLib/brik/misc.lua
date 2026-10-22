@@ -34,7 +34,9 @@ function misc.suffocateLock_event_whenSuffocate(P)
     local clearCount=#P.clearHistory
     P.deathTimer=false
     P.ghostState=false
-    P:createDesuffocateEffect()
+    if P.settings.effect_suffocate then
+        P:createDesuffocateEffect()
+    end
     P:brikDropped()
     if clearCount==#P.clearHistory then
         P:finish('suffocate')

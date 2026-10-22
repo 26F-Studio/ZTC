@@ -191,7 +191,7 @@ TRS[6]={
                                 self:playSound('rotate_special')
 
                                 -- Create particles
-                                if self.settings.particles then
+                                if self.settings.effect_rotate then
                                     local p=self.particles.star
                                     local w,h=#newMatrix[1],#newMatrix
                                     p:setParticleLifetime(.26,1.26)
@@ -226,7 +226,7 @@ TRS[6]={
             if not transformed then
                 self:moveHand('rotate',baseX+dx,baseY+dy,dir,ifInit)
                 self:playSound(ifInit and 'rotate_init' or 'rotate')
-                if self.settings.particles then
+                if self.settings.effect_rotate then
                     self:createRotateEffect(dir,ifInit)
                 end
             end
