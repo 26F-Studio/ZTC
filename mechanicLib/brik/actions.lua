@@ -1,5 +1,8 @@
 local ceil=math.ceil
 
+---@param charge number
+---@param mode 'reset' | 'keep' | 'raw' | 'full'
+---@param SET Techmino.Mode.Setting.Brik
 local function getCharge(charge,mode,SET)
     if mode=='reset' then
         return 0
@@ -16,6 +19,9 @@ local function getCharge(charge,mode,SET)
         error("WTF why dblMoveChrg is "..tostring(mode))
     end
 end
+---@param P Techmino.Player.Brik
+---@param dir 'L' | 'R'
+---@param canBuffer boolean
 local function move(P,dir,canBuffer)
     if P.hand then
         if P[dir=='L' and 'moveLeft' or 'moveRight'](P) then
@@ -29,6 +35,8 @@ local function move(P,dir,canBuffer)
             if P.settings.effect_move_fail then
                 P:createHandErrorEffect(1,.26,0)
             end
+
+            P:triggerEvent('onMoveFail','move',dir)
         end
     else
         if P.settings.entryChrg=='full' then
@@ -39,6 +47,8 @@ local function move(P,dir,canBuffer)
         end
     end
 end
+---@param P Techmino.Player.Brik
+---@param dir 'L' | 'R'
 local function pressMove(P,dir)
     local d=dir=='L' and -1 or 1
 
@@ -55,6 +65,8 @@ local function pressMove(P,dir)
         move(P,dir,true)
     end
 end
+---@param P Techmino.Player.Brik
+---@param dir 'L' | 'R'
 local function releaseMove(P,dir)
     local invD=dir=='L' and 'R' or 'L'
     local invDN=dir=='L' and -1 or 1

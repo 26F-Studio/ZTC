@@ -945,6 +945,7 @@ function BP:moveUp() -- ?
         return true
     end
 end
+---@param dir 'R' | 'L' | 'F'
 function BP:rotate(dir,ifInit)
     if self.settings.stopMoveWhenRotate then
         self.moveDir=false
@@ -1003,6 +1004,8 @@ function BP:rotate(dir,ifInit)
             if self.settings.effect_move_fail then
                 self:createHandErrorEffect(1,.26,.26)
             end
+
+            self:triggerEvent('onMoveFail','rotate',dir)
         else
             error("WTF why no state in brikData")
         end
@@ -2116,6 +2119,7 @@ function BP.new(remote)
         afterSpawn={},
         beforeMove={},
         afterMove={},
+        onMoveFail={},
         afterDrop={},
         afterLock={},
         beforeClear={},

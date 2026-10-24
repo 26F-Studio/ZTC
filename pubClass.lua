@@ -26,6 +26,7 @@
 ---| 'afterSpawn'      -- Brik, Gela
 ---| 'beforeMove'      -- Brik(act,A,B,C,D), Gela(act,A,B,C)
 ---| 'afterMove'       -- Brik(act,A,B,C,D), Gela(act,A,B,C)
+---| 'onMoveFail'      -- Brik(act,dir)
 ---| 'afterDrop'       -- Brik, Gela
 ---| 'afterLock'       -- Brik, Gela
 ---| 'beforeClear'     -- Brik(lines)
