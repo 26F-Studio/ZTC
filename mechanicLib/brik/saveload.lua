@@ -1,23 +1,25 @@
 ---@type Map<Techmino.Event.Brik>
 local saveload={}
 
-function saveload.event_playerInit(P)
+function saveload.event_playerInit(P,limit,onBeforeLoad,onAfterLoad)
     local md=P.modeData
-    md.undoData={}
-    P:setAction('func1',saveload.action_load)
-    P:addEvent('afterSpawn',saveload.event_afterSpawn)
-    P:addEvent('beforeDiscard',saveload.event_beforeDiscard)
-    P:addEvent('drawOnPlayer',saveload.event_drawOnPlayer)
-    P:addEvent('afterClear',saveload.event_afterClear)
-    P.modeData.onBeforeLoad=NULL -- Callback before undo happens, could return [custom data]
-    P.modeData.onAfterLoad=NULL  -- Callback after undo happens, will receive the [custom data]
 
+    -- Options
+    md.onBeforeLoad=onBeforeLoad or NULL -- Callback before undo happens, could return [custom data]
+    md.onAfterLoad=onAfterLoad or NULL   -- Callback after undo happens, will receive the [custom data]
+    md.undoDepthLimit=limit or 6
+
+    md.undoData={}
     md.undoInfo={
         time=0,               -- total undo count
         depth=0,              -- current undo depth
         confirmOnClear=false, -- clear undo history on clear
     }
-    md.undoDepthLimit=6
+    P:setAction('func1',saveload.action_load)
+    P:addEvent('afterSpawn',saveload.event_afterSpawn)
+    P:addEvent('beforeDiscard',saveload.event_beforeDiscard)
+    P:addEvent('drawOnPlayer',saveload.event_drawOnPlayer)
+    P:addEvent('afterClear',saveload.event_afterClear)
 end
 function saveload.action_load(P)
     local md=P.modeData
