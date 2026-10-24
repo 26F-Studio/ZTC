@@ -117,25 +117,30 @@ book.T=book.J
 ---@type Map<Techmino.Event.Brik>
 local finesse={}
 
-function finesse.event_playerInit(P)
-    -- P.stat.key                  -- Total keys
-    -- P.stat.piece                -- Total drops
-    P.modeData.kpp=0               -- KPP (traditional)
+function finesse.event_playerInit(P,onFault,force180,noStuck)
+    -- P.stat.key              -- Total keys
+    -- P.stat.piece            -- Total drops
+    P.modeData.kpp=0           -- KPP (traditional)
 
-    P.modeData.fault=0             -- Fault count
-    P.modeData.overCnt=0           -- Extra moves count
+    P.modeData.fault=0         -- Fault count
+    P.modeData.overCnt=0       -- Extra moves count
 
-    P.modeData.movSeq=''           -- Current piece move history (count)
-    P.modeData.movCnt=0            -- Total moves/rotations
-    -- P.stat.spawn                -- Total spawns
-    P.modeData.neatPiece=0         -- Open-air drops
-    P.modeData.mpp=0               -- Moves per piece (open-air drops only, hard drop counts but hold doesn't, measures placement quality)
-    P.modeData.dropRate='100%'     -- Open-air drop rate
-    P.modeData.refAns=false        -- Reference answer list of last drop (after fault)
-    P.modeData.onFinesseFault=NULL -- Callback for finesse fault
+    P.modeData.movSeq=''       -- Current piece move history (count)
+    P.modeData.movCnt=0        -- Total moves/rotations
+    -- P.stat.spawn            -- Total spawns
+    P.modeData.neatPiece=0     -- Open-air drops
+    P.modeData.mpp=0           -- Moves per piece (open-air drops only, hard drop counts but hold doesn't, measures placement quality)
+    P.modeData.dropRate='100%' -- Open-air drop rate
+    P.modeData.refAns=false    -- Reference answer list of last drop (after fault)
+
+    -- Options
+    P.modeData.onFinesseFault=onFault or NULL -- Callback on finesse fault
+    P.modeData.force180=force180              -- Enable 180-degree rotation requirement
+    P.modeData.noStuck=noStuck                -- Enable no-stuck rule
 
     P:addEvent('afterResetPos',finesse.event_afterResetPos)
     P:addEvent('beforeMove',finesse.event_beforeMove)
+    P:addEvent('onMoveFail',finesse.event_onMoveFail)
     P:addEvent('afterDrop',finesse.event_afterDrop)
     P:addEvent('beforeDiscard',finesse.event_beforeDiscard)
 end
@@ -175,6 +180,12 @@ function finesse.event_beforeMove(P,act,A,B,C,D)
     end
 end
 
+function finesse.event_onMoveFail(P,act)
+    if P.modeData.noStuck then
+        P.modeData.movSeq=P.modeData.movSeq..(act=='move' and 'x' or 'X')
+    end
+end
+
 
 function finesse.event_afterDrop(P)
     -- Overhang check
@@ -196,9 +207,13 @@ function finesse.event_afterDrop(P)
         local move=#md.movSeq
         local ansList=book[piece][dir][x]
         local par=#ansList[1]
-        if ansList[1]:find(',') then par=par-1 end
-        if md.movSeq:sub(1,1)=='!' then par=par+1 end
-        if not md.force180 and ansList[1]:find('F') and not md.movSeq:find('F') then par=par+1 end
+        if md.movSeq:find('[xX]') then
+            par=-1
+        else
+            if ansList[1]:find(',') then par=par-1 end
+            if md.movSeq:sub(1,1)=='!' then par=par+1 end
+            if not md.force180 and ansList[1]:find('F') and not md.movSeq:find('F') then par=par+1 end
+        end
         if move>par then
             md.refAns=TABLE.copy(ansList)
             md.onFinesseFault(P)
