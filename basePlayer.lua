@@ -519,10 +519,10 @@ function P:update(dt)
             self.time=self.time+1
             local d=self.settings.readyDelay-self.time
             if floor((d+1)/1000)~=floor(d/1000) then
-                self:playSound('countDown',ceil(d/1000))
+                self:playSound('countdown',ceil(d/1000))
             end
             if d==0 then
-                self:playSound('countDown',0)
+                self:playSound('countdown',0)
                 self.timing=true
 
                 self:triggerEvent('gameStart')

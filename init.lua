@@ -169,7 +169,7 @@ for _,v in next,{
     'finish_timeout','finish_rule','finish_exhaust','finish_taskfail','finish_other',
     'beep_rise','beep_drop','beep_notice',
 } do GAME.sndFunc[v]=function(vol) SFX.play(v,vol) end end
-function GAME.sndFunc.countDown(num) SFX.play('countdown_'..MATH.clamp(num,1,3)) end
+function GAME.sndFunc.countdown(num) SFX.play('countdown_'..MATH.clamp(num,1,3)) end
 function GAME.sndFunc.clear(lines) SFX.play('clear_'..MATH.clamp(lines,1,5)) end
 function GAME.sndFunc.spin(lines) SFX.play('spin_'..MATH.clamp(lines,0,3)) end
 function GAME.sndFunc.combo(num) SFX.play('combo_'..MATH.clamp(num,1,10)) end
