@@ -177,7 +177,7 @@
 
 ---@class Techmino.Skin
 ---@field base? string
----@field getTime function
+---@field time number ms
 ---@field drawFieldBackground fun(fieldW:number)
 ---@field drawFieldCell fun(C:Techmino.Brik.Cell, F:Techmino.RectField, x:number, y:number)
 ---@field drawGhostCell fun(C:Techmino.Brik.Cell, B:Techmino.RectPiece, x:number, y:number)

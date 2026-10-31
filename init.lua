@@ -5,7 +5,8 @@ require'rotsys_brik'
 ---@type Techmino.MechLib
 mechLib={}
 local modeLib={} ---@type Map<string | Techmino.Mode>
-local skinLib={} ---@type Map<string | Techmino.Skin>
+local skinLib={} ---@type Map<Techmino.Skin>
+local skinPath={} ---@type Map<string>
 local modeMeta={
     __index={
         initialize=NULL,
@@ -138,6 +139,7 @@ end
 ---@field mode Techmino.Mode | false
 ---@field mainID number | false
 ---@field mainPlayer Techmino.Player | false
+---@field skinTime number
 local GAME={
     playing=false,
 
@@ -245,26 +247,32 @@ end
 ---@param path string
 function GAME.addSkin(name,path)
     assert(type(name)=='string',"name must be string")
-    assert(not skinLib[name],"skin "..tostring(name).." already exists")
+    assert(not skinPath[name],"skin "..tostring(name).." already exists")
     assert(type(path)=='string',"path must be string")
     if not (love.filesystem.getInfo(path) and FILE.isSafe(path)) then LOG('warn',"No skin file named "..tostring(name)) end
-    skinLib[name]=path
+    skinPath[name]=path
 end
 
----@param name string
----@return Techmino.Skin
-function GAME.getSkin(name)
-    local S=skinLib[name]
-    if type(S)=='table' then return S end
-    ---@cast S string
+---Set time for a skin and all its base skins
+---@param skin Techmino.Skin
+---@param time number ms
+local function setSkinTime(skin,time)
+    skin.time=time
+    local mt=getmetatable(skin)
+    local base=mt and rawget(mt,'__index')
+    if type(base)=='table' then setSkinTime(base,time) end
+end
 
-    -- Load & Cache the skin file
-    assert(love.filesystem.getInfo(S) and FILE.isSafe(S),"No skin file: "..tostring(name))
-    S=FILE.load(S,'-lua')
+---Load and cache a registered skin file
+---@param name string
+---@return Techmino.Skin?
+local function loadSkin(name)
+    local path=skinPath[name] or error("No skin named "..tostring(name),2)
+
+    assert(love.filesystem.getInfo(path) and FILE.isSafe(path),"No skin file: "..tostring(name))
+    local S=FILE.load(path,'-lua')
     assert(type(S)=='table',"Skin file must return a table")
     assert(getmetatable(S)==nil,"Skin table must not have metatable")
-    assert(S.getTime==nil,"Skin.getTime must be nil")
-    S.getTime=function() return GAME.skinTime end
 
     local base=S.base
     if base~=nil then
@@ -281,6 +289,18 @@ function GAME.getSkin(name)
     return S
 end
 
+setmetatable(skinLib,{
+    __index=function(_,name) return loadSkin(name) end,
+})
+
+---@param name string
+---@return Techmino.Skin
+function GAME.getSkin(name)
+    local S=skinLib[name]
+    setSkinTime(S,math.floor(GAME.skinTime*1000))
+    return S
+end
+
 function GAME.load(name,seed)
     -- print("Game Loaded: "..mode.."-"..seed)
     if GAME.mode then
@@ -291,6 +311,7 @@ function GAME.load(name,seed)
     GAME.playerList={}
     GAME.playerMap={}
     GAME.mainPlayer=false
+    GAME.skinTime=0
     GAME.seed=seed or math.random(2^16,2^26)
     GAME.mode=GAME.getMode(name)
     if GAME.mode.initialize then GAME.mode.initialize() end
@@ -524,6 +545,7 @@ end
 
 function GAME.update(dt)
     if not GAME.playerList then return end
+    GAME.skinTime=GAME.skinTime+dt
     for _,P in next,GAME.playerList do P:update(dt) end
 
     GAME.camera:update(dt)

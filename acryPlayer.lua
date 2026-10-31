@@ -595,7 +595,6 @@ end
 function AP:render()
     local SET=self.settings
     local skin=GAME.getSkin(SET.skin)
-    GAME.skinTime=self.time
 
     gc_push('transform')
 
