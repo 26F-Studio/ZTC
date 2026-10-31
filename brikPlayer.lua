@@ -1677,8 +1677,8 @@ function BP:tickStep()
 end
 function BP:render()
     local SET=self.settings
-    local skin=SKIN.get(SET.skin)
-    SKIN.time=self.time
+    local skin=GAME.getSkin(SET.skin)
+    GAME.skinTime=self.time
 
     gc_push('transform')
 

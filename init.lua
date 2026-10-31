@@ -5,6 +5,7 @@ require'rotsys_brik'
 ---@type Techmino.MechLib
 mechLib={}
 local modeLib={} ---@type Map<string | Techmino.Mode>
+local skinLib={} ---@type Map<string | Techmino.Skin>
 local modeMeta={
     __index={
         initialize=NULL,
@@ -151,6 +152,8 @@ local GAME={
 
     mainID=false,
     mainPlayer=false,
+
+    skinTime=0,
 }
 
 GAME.camera.moveSpeed=12
@@ -235,6 +238,47 @@ function GAME.getMode(name)
     M.name=name
     modeLib[name]=M
     return M
+end
+
+--- Register skin to the skinLib
+---@param name string
+---@param path string
+function GAME.addSkin(name,path)
+    assert(type(name)=='string',"name must be string")
+    assert(not skinLib[name],"skin "..tostring(name).." already exists")
+    assert(type(path)=='string',"path must be string")
+    if not (love.filesystem.getInfo(path) and FILE.isSafe(path)) then LOG('warn',"No skin file named "..tostring(name)) end
+    skinLib[name]=path
+end
+
+---@param name string
+---@return Techmino.Skin
+function GAME.getSkin(name)
+    local S=skinLib[name]
+    if type(S)=='table' then return S end
+    ---@cast S string
+
+    -- Load & Cache the skin file
+    assert(love.filesystem.getInfo(S) and FILE.isSafe(S),"No skin file: "..tostring(name))
+    S=FILE.load(S,'-lua')
+    assert(type(S)=='table',"Skin file must return a table")
+    assert(getmetatable(S)==nil,"Skin table must not have metatable")
+    assert(S.getTime==nil,"Skin.getTime must be nil")
+    S.getTime=function() return GAME.skinTime end
+
+    local base=S.base
+    if base~=nil then
+        assert(type(base)=='string' and base~=name,"Skin.base must be a valid skin name")
+        setmetatable(S,{__index=GAME.getSkin(base)})
+    end
+
+    if S.drawNext==nil then S.drawNext=true end
+    if S.drawHold==nil then S.drawHold=true end
+    assert(type(S.drawNext)=='boolean',"Skin.drawNext must be boolean")
+    assert(type(S.drawHold)=='boolean',"Skin.drawHold must be boolean")
+
+    skinLib[name]=S
+    return S
 end
 
 function GAME.load(name,seed)

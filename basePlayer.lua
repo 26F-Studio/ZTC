@@ -60,7 +60,7 @@ local P={}
 -- Tools
 
 function P:drawInfoPanel(x,y,w,h)
-    return SKIN.get(self.settings.skin).drawInfoPanel(x,y,w,h)
+    return GAME.getSkin(self.settings.skin).drawInfoPanel(x,y,w,h)
 end
 
 --------------------------------------------------------------

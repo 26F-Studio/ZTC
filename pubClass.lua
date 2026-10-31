@@ -175,6 +175,35 @@
 
 
 
+---@class Techmino.Skin
+---@field base? string
+---@field getTime function
+---@field drawFieldBackground fun(fieldW:number)
+---@field drawFieldCell fun(C:Techmino.Brik.Cell, F:Techmino.RectField, x:number, y:number)
+---@field drawGhostCell fun(C:Techmino.Brik.Cell, B:Techmino.RectPiece, x:number, y:number)
+---@field drawHandCellStroke fun(C:Techmino.Brik.Cell, B:Techmino.RectPiece, x:number, y:number)
+---@field drawHandCell fun(C:Techmino.Brik.Cell, B:Techmino.RectPiece, x:number, y:number)
+---@field drawFloatHoldCell fun(C:Techmino.Brik.Cell, disabled:boolean, B:Techmino.RectPiece, x:number, y:number)
+---@field drawFloatHoldMark fun(n:number, disabled:boolean)
+---@field drawHeightLines fun(fieldW:number, maxSpawnH:number, spawnH:number, lockoutH:number, deathH:number, voidH:number)
+---@field drawFieldBorder fun()
+---@field drawAsdIndicator fun(dir:number , charge:number, asdMax:number, aspMax:number, ash:number)
+---@field drawDelayIndicator fun(mode:'spawn'|'death'|'lock', value:number)
+---@field drawGarbageBuffer fun(garbageBuffer:table)
+---@field drawLockDelayIndicator fun(freshCondition:string, freshChance:number, maxFreshTime:number, freshTime:number)
+---
+---@field drawNext boolean
+---@field drawNextBorder fun(slot:number)
+---@field drawNextCell fun(C:Techmino.Brik.Cell, disabled:boolean, B:Techmino.RectPiece, x:number, y:number)
+---
+---@field drawHold boolean
+---@field drawHoldBorder fun(mode:string, slot:number)
+---@field drawHoldCell fun(C:Techmino.Brik.Cell, disabled:boolean, B:Techmino.RectPiece, x:number, y:number)
+---
+---@field drawTime fun(time:number)
+---@field drawStartingCounter fun(readyDelay:number)
+---@field drawInfoPanel fun(x:number, y:number, w:number, h:number) Only called by mode
+
 ---@class Techmino.Mode
 ---@field initialize function Called when initializing the mode
 ---@field settings {brik:Techmino.Mode.Setting.Brik?, gela:Techmino.Mode.Setting.Gela?, acry:Techmino.Mode.Setting.Acry?}
