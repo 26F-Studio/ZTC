@@ -1852,11 +1852,11 @@ function BP:render()
 
     -- Delay indicator
     if not self.hand then -- Spawn
-        skin.drawDelayIndicator(COLOR.lB,self.spawnTimer/SET.spawnDelay)
+        skin.drawDelayIndicator('spawn',self.spawnTimer/SET.spawnDelay)
     elseif self.deathTimer then -- Death
-        skin.drawDelayIndicator(COLOR.R,self.deathTimer/SET.deathDelay)
+        skin.drawDelayIndicator('death',self.deathTimer/SET.deathDelay)
     else -- Lock
-        skin.drawDelayIndicator(COLOR.lY,self.lockTimer/SET.lockDelay)
+        skin.drawDelayIndicator('lock',self.lockTimer/SET.lockDelay)
     end
 
     -- Garbage buffer

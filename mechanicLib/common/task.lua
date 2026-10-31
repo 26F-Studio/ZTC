@@ -133,7 +133,7 @@ function task.event_drawOnPlayer(P)
         end
         GC.rectangle('fill',0,0,w*opt.valueShow,dh)
 
-        GC.setColor(COLOR.L)
+        GC.setColor(CLR.l9)
         FONT.set(25,'bold')
         GC.print(Text[opt.title] or opt.title,20,12)
 
@@ -148,13 +148,13 @@ function task.event_drawOnPlayer(P)
         GC.translate(0,dh)
     end
 
-    GC.setColor(COLOR.L)
+    GC.setColor(CLR.l9)
     for i=1,#L-1 do
         GC.line(0,-dh*i,w,-dh*i)
     end
 
     GC.stc_stop()
-    GC.setColor(COLOR.L)
+    GC.setColor(CLR.l9)
     GC.rectangle('line',0,-h,w,h,r)
     GC.pop()
 end

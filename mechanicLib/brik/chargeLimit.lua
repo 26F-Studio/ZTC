@@ -326,7 +326,7 @@ do -- spin
             if device.visible then
                 local x,y,w,h=styles[i].x,styles[i].y,styles[i].w,styles[i].h
                 if device.doom then
-                    gc_setColor(COLOR.lR)
+                    gc_setColor(CLR.l4RSS)
                     gc_line(x,y,x+w,y+h)
                     gc_line(x+w,y,x,y+h)
                 elseif device.pow>=0 then

@@ -9,7 +9,7 @@ local timer_drawFunc={
         P:drawInfoPanel(-380,-60,160,120)
         FONT.set(75)
         local text=("%.1f"):format(time/1000)
-        GC.setColor(COLOR.lD)
+        GC.setColor(CLR.d4)
         GC.mStr(text,-298,-33)
         local t=time/time0
         GC.setColor(1.7-1.7*t,3+2*t,.3)

@@ -112,7 +112,7 @@ do -- marathon
         GC.rectangle('fill',-375,-2,150,4)
         GC.mStr(md.lineTarget,-300,-5)
         FONT.set(30,'bold')
-        GC.setColor(md.level<=10 and COLOR.G or md.level<=20 and COLOR.Y or COLOR.R)
+        GC.setColor(md.level<=10 and CLR.l4GSS or md.level<=20 and CLR.l5YgSS or CLR.l3RySS)
         GC.mStr(md.dispLevel,-300,70)
     end
 end

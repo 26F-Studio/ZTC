@@ -19,10 +19,10 @@ function survivor.event_drawOnPlayer(P)
 
     local cd=P.modeData.waveTimer/P.modeData.curWaveTime
     GC.setLineWidth(10)
-    GC.setColor(COLOR.DL)
+    GC.setColor(CLR.l5)
     GC.arc('line','open',-300,130,40,-MATH.pi*.5,cd*MATH.tau-MATH.pi*.5)
     GC.setLineWidth(3)
-    GC.setColor(COLOR.lD)
+    GC.setColor(CLR.d4)
     GC.circle('line',-300,130,32)
     GC.circle('line',-300,130,48)
 end
