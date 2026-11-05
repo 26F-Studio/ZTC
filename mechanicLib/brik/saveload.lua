@@ -86,7 +86,8 @@ function saveload.event_drawOnPlayer(P)
         GC.setColor(1,1,1,.26)
         GC.rectangle('fill',-380,326,160*(math.max(#md.undoData-1,0)/md.undoDepthLimit),26)
     end
-    GC.setColor(0,0,0,.42)
+    GC.setLineWidth(2)
+    GC.setColor(1,1,1,.42)
     GC.rectangle('line',-380,326,160,26)
 end
 
