@@ -28,7 +28,7 @@ AP.scriptCmd={
 -- Actions
 
 AP._actions={}
-for k,v in next,mechLib.acry.actions do AP._actions[k]=AP:_getActionObj(v) end
+for k,v in next,GAME.mechLib.acry.actions do AP._actions[k]=AP:_getActionObj(v) end
 
 --------------------------------------------------------------
 -- Effects
@@ -130,7 +130,7 @@ end
 function AP:triggerAcryEvent(acry,name)
     ---@cast acry Techmino.Acry.Cell
     local propList=acry.prop
-    local propSys=mechLib.acry.propSys
+    local propSys=GAME.mechLib.acry.propSys
     for i=1,#propList do
         local eventFunc=propSys[propList[i]][name]
         if eventFunc then

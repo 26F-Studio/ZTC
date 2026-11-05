@@ -35,7 +35,7 @@ BP.scriptCmd={
 -- Actions
 
 BP._actions={}
-for k,v in next,mechLib.brik.actions do BP._actions[k]=BP:_getActionObj(v) end
+for k,v in next,GAME.mechLib.brik.actions do BP._actions[k]=BP:_getActionObj(v) end
 
 --------------------------------------------------------------
 -- Utils
@@ -573,7 +573,7 @@ function BP:setSequenceGen(seqData,args)
     if args:sArg('-clearData') then self.seqData={} end
     if args:sArg('-clearNext') then TABLE.clear(self.nextQueue) end
 
-    self.seqGen=mechLib.brik.sequence[seqData] or seqData
+    self.seqGen=GAME.mechLib.brik.sequence[seqData] or seqData
     assert(self:seqGen(self.seqData,true)==nil,"First call of sequence generator must return nil")
     self:freshNextQueue()
 end
@@ -1089,7 +1089,7 @@ function BP:doClear(fullLines)
 
     self:triggerEvent('beforeClear',fullLines)
 
-    mechLib.brik.clearRule[self.settings.clearRule].clear(self,fullLines)
+    GAME.mechLib.brik.clearRule[self.settings.clearRule].clear(self,fullLines)
     local n=#fullLines
     local his={
         combo=self.combo,
@@ -1162,7 +1162,7 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
     if self.finished then return end
 
     -- Clear
-    local fullLines=mechLib.brik.clearRule[SET.clearRule].getFill(self)
+    local fullLines=GAME.mechLib.brik.clearRule[SET.clearRule].getFill(self)
     if fullLines then
         self.combo=self.combo+1
         if self.settings.combo_sound then
@@ -1260,7 +1260,7 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
         end
     end
 
-    self.spawnTimer=SET.spawnDelay+(fullLines and mechLib.brik.clearRule[SET.clearRule].getDelay(self,fullLines) or 0)
+    self.spawnTimer=SET.spawnDelay+(fullLines and GAME.mechLib.brik.clearRule[SET.clearRule].getDelay(self,fullLines) or 0)
 
     -- Fresh hand
     if self.spawnTimer<=0 then

@@ -49,7 +49,7 @@ do -- line (fill row to clear)
     function clearRule.line.getFill(P)
         local fullLines={}
         for y=1,P.field:getHeight() do
-            if mechLib.brik.clearRule.line.isFill(P,y) then
+            if GAME.mechLib.brik.clearRule.line.isFill(P,y) then
                 ins(fullLines,y)
             end
         end
@@ -89,7 +89,7 @@ do -- triplets (filled lines which form arithmetic progression to clear, from te
     function clearRule.triplets.getFill(P)
         local fullLines={}
         for y=1,P.field:getHeight() do
-            if mechLib.brik.clearRule.line.isFill(P,y) then
+            if GAME.mechLib.brik.clearRule.line.isFill(P,y) then
                 ins(fullLines,y)
             end
         end
@@ -141,7 +141,7 @@ do -- cheese (90% fill to clear)
     function clearRule.cheese.getFill(P)
         local fullLines={}
         for y=1,P.field:getHeight() do
-            if mechLib.brik.clearRule.cheese.isFill(P,y) then
+            if GAME.mechLib.brik.clearRule.cheese.isFill(P,y) then
                 ins(fullLines,y)
             end
         end

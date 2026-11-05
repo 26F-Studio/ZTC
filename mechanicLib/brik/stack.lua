@@ -51,7 +51,7 @@ function stack.switch_auto(P,fall,timeLimit)
     setEvent(P,'afterLock',fall and stack.event_afterLock or stack.event_afterLock_noFall)
     setEvent(P,'drawOnPlayer',stack.event_drawOnPlayer)
     setEvent(P,'whenSuffocate',stack.event_whenSuffocate)
-    if P.modeData.stack_enabled and timeLimit then mechLib.common.timer.new(P,timeLimit,{timeUp=stack.event_whenSuffocate,draw='float',cancel=stack._outStackState}) end
+    if P.modeData.stack_enabled and timeLimit then GAME.mechLib.common.timer.new(P,timeLimit,{timeUp=stack.event_whenSuffocate,draw='float',cancel=stack._outStackState}) end
 end
 function stack.switch(P)
     local md=P.modeData
@@ -97,7 +97,7 @@ function stack.switch(P)
         end
 
         P.settings.clearRule=md.stack_original_clearRule
-        local lines=mechLib.brik.clearRule.line.getFill(P)
+        local lines=GAME.mechLib.brik.clearRule.line.getFill(P)
         if lines then
             P:doClear(lines)
             P:freshGhost()
@@ -137,7 +137,7 @@ function stack.event_afterLock(P)
         local list={}
         local md=P.modeData
         for y=md.stack_lines+1,F:getHeight() do
-            if mechLib.brik.clearRule.line.isFill(P,y) then
+            if GAME.mechLib.brik.clearRule.line.isFill(P,y) then
                 table.insert(list,y)
             end
         end
@@ -179,7 +179,7 @@ function stack.event_afterLock_noFall(P)
         local list={}
         local md=P.modeData
         for y=1,F:getHeight() do
-            if not md.stack_lineList[y] and mechLib.brik.clearRule.line.isFill(P,y) then
+            if not md.stack_lineList[y] and GAME.mechLib.brik.clearRule.line.isFill(P,y) then
                 table.insert(list,y)
                 md.stack_lineList[y]=true
                 if y>md.stack_highestLine then

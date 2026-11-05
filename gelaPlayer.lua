@@ -28,7 +28,7 @@ GP.scriptCmd={
 -- Actions
 
 GP._actions={}
-for k,v in next,mechLib.gela.actions do GP._actions[k]=GP:_getActionObj(v) end
+for k,v in next,GAME.mechLib.gela.actions do GP._actions[k]=GP:_getActionObj(v) end
 
 --------------------------------------------------------------
 -- Effects
@@ -399,7 +399,7 @@ function GP:setSequenceGen(seqData,args)
     if args:sArg('-clearData') then self.seqData={} end
     if args:sArg('-clearNext') then TABLE.clear(self.nextQueue) end
 
-    self.seqGen=mechLib.gela.sequence[seqData] or seqData
+    self.seqGen=GAME.mechLib.gela.sequence[seqData] or seqData
     assert(self:seqGen(self.seqData,true)==nil,"First call of sequence generator must return nil")
     self:freshNextQueue()
     self:decreaseNextColor(self.settings.maxOpeningLength,self.settings.maxOpeningColor)
@@ -1553,9 +1553,9 @@ function GP:initialize()
     ---@type any
     local set=self.settings.colorSet
     if set=='random' then
-        set=mechLib.gela.colorSet.getRandom(self)
+        set=GAME.mechLib.gela.colorSet.getRandom(self)
     elseif type(set)=='string' then
-        set=mechLib.gela.colorSet[set]
+        set=GAME.mechLib.gela.colorSet[set]
     elseif type(set)~='table' then
         error("Invalid P.settings.colorSet")
     end

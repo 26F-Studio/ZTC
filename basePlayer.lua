@@ -116,7 +116,7 @@ function P:movePosition(dx,dy,k,da)
 end
 ---@param method 'init' | 'drop' | string
 function P:atkEvent(method,...)
-    local sys=mechLib[self.gameMode].attackSys[self.settings.atkSys]
+    local sys=GAME.mechLib[self.gameMode].attackSys[self.settings.atkSys]
     assert(sys and sys[method],"Invalid attackSys / method")
     return sys[method](self,...)
 end
@@ -251,6 +251,34 @@ function P:triggerEvent(name,...)
         end
     end
 end
+
+local sandBoxEnv={
+    math=math,
+    string=string,
+    table=table,
+    coroutine=coroutine,
+    assert=assert,
+    error=error,
+    tonumber=tonumber,
+    tostring=tostring,
+    select=select,
+    next=next,
+    ipairs=ipairs,
+    pairs=pairs,
+    type=type,
+    pcall=pcall,
+    xpcall=xpcall,
+    rawget=rawget,
+    rawset=rawset,
+    rawlen=rawlen,
+    rawequal=rawequal,
+    setmetatable=setmetatable,
+    GAME={},
+}
+local function setSafeEnv(func)
+    sandBoxEnv.GAME.mechLib=GAME.mechLib -- Update in case it changes during game
+    setfenv(func,TABLE.copyAll(sandBoxEnv))
+end
 ---- Statistic: -1e99
 ---- Music: 1e62
 ---- Default: 0
@@ -274,7 +302,7 @@ function P:addEvent(name,E)
         ---@type Techmino.Event
         E,errMsg=loadstring('local P=...;'..E)
         if E then
-            SetSafeEnv(E)
+            setSafeEnv(E)
             self:addEvent(name,E)
         else
             error("Error in code string: "..errMsg)

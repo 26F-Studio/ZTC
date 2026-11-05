@@ -2,8 +2,6 @@ local require=simpRequire('ZTC.')
 Brik=require'briks'
 require'rotsys_brik'
 
----@type Techmino.MechLib
-mechLib={}
 local modeLib={} ---@type Map<string | Techmino.Mode>
 local skinLib={} ---@type Map<Techmino.Skin>
 local skinPath={} ---@type Map<string>
@@ -160,6 +158,9 @@ local GAME={
 
 GAME.camera.moveSpeed=12
 
+---@type Techmino.MechLib
+GAME.mechLib={}
+
 -- Basic sound events, this should be modified according to specific game designs
 GAME.sndFunc={__metatable=true}
 GAME.sndFunc.__index=GAME.sndFunc
@@ -200,8 +201,8 @@ GAME.regFunc(GAME.sndFunc,'GAME.sndFunc')
 
 function GAME._refresh()
     TABLE.clear(modeLib)
-    TABLE.update(mechLib,TABLE.linkSource({},require'mechanicLib',function(path) return FILE.load(path,'-lua') end,true))
-    GAME.regFunc(mechLib,'mechLib')
+    TABLE.update(GAME.mechLib,TABLE.linkSource({},require'mechanicLib',function(path) return FILE.load(path,'-lua') end,true))
+    GAME.regFunc(GAME.mechLib,'mechLib')
 end
 GAME._refresh()
 

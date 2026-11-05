@@ -417,7 +417,7 @@ do -- Chain
             misc.chain_fall(P)
             P.modeData.chainTimer=P.modeData.chainDelay
         else
-            local fullLines=mechLib.brik.clearRule[P.settings.clearRule].getFill(P)
+            local fullLines=GAME.mechLib.brik.clearRule[P.settings.clearRule].getFill(P)
             if fullLines then
                 P:doClear(fullLines)
             else
@@ -542,8 +542,8 @@ do -- Haunted
             P.modeData.ghostLight_powerID=0
             P.modeData.ghostLight_List={}
             P.modeData.ghostLight_Map={}
-            P:addEvent('always',mechLib.brik.misc.haunted_always)
-            P:addEvent('afterLock',mechLib.brik.misc.haunted_afterLock)
+            P:addEvent('always',GAME.mechLib.brik.misc.haunted_always)
+            P:addEvent('afterLock',GAME.mechLib.brik.misc.haunted_afterLock)
             -- P:addEvent('drawInField',mechLib.brik.misc.haunted_drawInField)
         end
         P.modeData.ghostLight_spreadTime=spreadTime or P.modeData.ghostLight_spreadTime or default_spreadTime
