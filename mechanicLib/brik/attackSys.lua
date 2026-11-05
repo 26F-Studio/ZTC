@@ -1,6 +1,10 @@
 local max,min=math.max,math.min
 local floor,ceil=math.floor,math.ceil
 
+---@class Techmino.Mech.Brik.AttackSys
+---@field init fun(P:Techmino.Player.Brik)
+---@field drop fun(P:Techmino.Player.Brik):Techmino.Game.Attack
+
 ---@enum (key) Techmino.Mech.Brik.AttackSysName
 local atkSys={
 

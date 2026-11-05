@@ -1,3 +1,7 @@
+---@class Techmino.Mech.Gela.AttackSys
+---@field init fun(P:Techmino.Player.Gela)
+---@field drop fun(P:Techmino.Player.Gela):Techmino.Game.Attack
+
 ---@type Map<Map<fun(P:Techmino.Player.Gela): any>>
 local atkSys={}
 
