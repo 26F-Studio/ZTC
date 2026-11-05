@@ -3,7 +3,7 @@ local floor,ceil=math.floor,math.ceil
 
 ---@class Techmino.Mech.Brik.AttackSys
 ---@field init fun(P:Techmino.Player.Brik)
----@field drop fun(P:Techmino.Player.Brik):Techmino.Game.Attack
+---@field onDrop fun(P:Techmino.Player.Brik):Techmino.Game.Attack
 
 ---@enum (key) Techmino.Mech.Brik.AttackSysName
 local atkSys={
@@ -11,12 +11,13 @@ local atkSys={
 -- No attack
 none={
     init=NULL,
-    drop=NULL,
+    onDrop=NULL,
 },
 
 -- N attack N
 basic={
-    drop=function(P)
+    init=NULL,
+    onDrop=function(P)
         if P.lastMovement.clear then
             local lines=#P.lastMovement.clear
             P.texts:add{
@@ -43,7 +44,7 @@ modern={
         P.settings.spin_corners=3
         P.settings.combo_sound=true
     end,
-    drop=function(P)
+    onDrop=function(P)
         ---@type Techmino.Game.Attack
         local atk
         local M=P.lastMovement
@@ -182,7 +183,7 @@ nextgen={
         P.settings.spin_immobile=true
         P.settings.combo_sound=true
     end,
-    drop=function(P)
+    onDrop=function(P)
         local text=''
         local M=P.lastMovement
         local spin=M.action=='rotate' and (M.corners or M.immobile)
@@ -306,9 +307,4 @@ nextgen={
 
 }
 
-for _,sys in next,atkSys do
-    setmetatable(sys,{__index=atkSys.none})
-end
-
----@cast atkSys Map<Map<Techmino.Event.Brik>>
 return atkSys

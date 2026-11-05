@@ -584,7 +584,7 @@ function BP:setAttackSystem(atkSys)
     self.settings.spin_corners=false
     self.settings.combo_sound=false
     self.settings.atkSys=atkSys
-    self:atkEvent('init')
+    GAME.mechLib.brik.attackSys[atkSys].init(self)
 end
 function BP:freshNextQueue()
     while #self.nextQueue<max(self.settings.nextSlot,1) do
@@ -1181,7 +1181,7 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
     end
 
     -- Attack
-    local atk=self:atkEvent('drop')
+    local atk=GAME.mechLib.brik.attackSys[SET.atkSys].onDrop(self)
     if atk then
         atk=GAME.initAtk(atk)
         atk.srcMode=self.gameMode

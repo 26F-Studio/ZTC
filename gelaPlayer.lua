@@ -847,7 +847,7 @@ function GP:doClear()
     self:playSound('clear',#self.clearingGroups)
 
     -- Attack
-    local atk=self:atkEvent('clear')
+    local atk=GAME.mechLib.gela.attackSys[self.settings.atkSys].onClear(self)
     if atk then
         atk=GAME.initAtk(atk)
         atk.srcMode=self.gameMode
@@ -1571,7 +1571,7 @@ function GP:initialize()
     self.chain=0
 
     self.atkSysData={}
-    self:atkEvent('init')
+    GAME.mechLib.gela.attackSys[self.settings.atkSys].init(self)
     self.garbageBuffer={}
     self.garbageSum=0
 

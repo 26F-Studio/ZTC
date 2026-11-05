@@ -1,6 +1,6 @@
 ---@class Techmino.Mech.Gela.AttackSys
 ---@field init fun(P:Techmino.Player.Gela)
----@field drop fun(P:Techmino.Player.Gela):Techmino.Game.Attack
+---@field onClear fun(P:Techmino.Player.Gela):Techmino.Game.Attack
 
 ---@type Map<Map<fun(P:Techmino.Player.Gela): any>>
 local atkSys={}
@@ -8,7 +8,7 @@ local atkSys={}
 -- No attack
 atkSys.none={
     init=NULL,
-    clear=NULL,
+    onClear=NULL,
 }
 
 -- Classic
@@ -16,7 +16,7 @@ atkSys.classic={
     init=function(P)
         P.atkSysData.remainder=0
     end,
-    clear=function(P)
+    onClear=function(P)
         local sizes={}
         for i=1,#P.clearingGroups do
             sizes[i]=TABLE.getSize(P.clearingGroups[i])
@@ -56,11 +56,5 @@ atkSys.classic={
         end
     end,
 }
-
-for _,sys in next,atkSys do
-    setmetatable(sys,{__index=atkSys.none})
-end
-
-setmetatable(atkSys.none,{__index=function() return NULL end})
 
 return atkSys
