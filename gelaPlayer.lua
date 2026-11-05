@@ -1570,7 +1570,6 @@ function GP:initialize()
     self.pieceCount=0
     self.chain=0
 
-    self.atkSysData={}
     GAME.mechLib.gela.attackSys[self.settings.atkSys].init(self)
     self.garbageBuffer={}
     self.garbageSum=0

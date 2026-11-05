@@ -39,7 +39,7 @@ basic={
 -- Charge give 0.25*CHG (round+) more attack, up to 2 for T-Spin, 4 for Techrash(+), [Discharged count]/2 (round-) otherwise
 modern={
     init=function(P)
-        P.atkSysData.charge=0
+        P.modeData.atk_charge=0
         P.settings.spin_immobile=true
         P.settings.spin_corners=3
         P.settings.combo_sound=true
@@ -52,12 +52,12 @@ modern={
         if M.clear then
             local lines,combo=#P.lastMovement.clear,P.lastMovement.combo
 
-            local oldCharge=P.atkSysData.charge
+            local oldCharge=P.modeData.atk_charge
             local newCharge=
                 tspin and min(oldCharge+1,26) or
                 lines>=4 and min(oldCharge+1,26) or
                 max(oldCharge-6,0)
-            P.atkSysData.charge=newCharge
+            P.modeData.atk_charge=newCharge
 
             do -- Calculate attack
                 local power
@@ -179,7 +179,7 @@ modern={
 -- TODO: long-term charging for spin
 nextgen={
     init=function(P)
-        P.atkSysData.charge=0
+        P.modeData.atk_charge=0
         P.settings.spin_immobile=true
         P.settings.combo_sound=true
     end,

@@ -579,7 +579,6 @@ function BP:setSequenceGen(seqData,args)
 end
 ---@param atkSys string | Techmino.Mech.Brik.AttackSysName
 function BP:setAttackSystem(atkSys)
-    self.atkSysData={}
     self.settings.spin_immobile=false
     self.settings.spin_corners=false
     self.settings.combo_sound=false

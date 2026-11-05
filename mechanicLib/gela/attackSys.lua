@@ -14,7 +14,7 @@ atkSys.none={
 -- Classic
 atkSys.classic={
     init=function(P)
-        P.atkSysData.remainder=0
+        P.modeData.atk_remainder=0
     end,
     onClear=function(P)
         local sizes={}
@@ -47,10 +47,10 @@ atkSys.classic={
         end
 
         if mult==0 then mult=1 end
-        local score=(P.atkSysData.remainder+chip*mult)
+        local score=(P.modeData.atk_remainder+chip*mult)
 
         local power=math.floor(score/70)
-        P.atkSysData.remainder=score-power*70
+        P.modeData.atk_remainder=score-power*70
         if power>0 then
             return {power=power,time=1000}
         end
