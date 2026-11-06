@@ -233,7 +233,7 @@ function finesse.event_beforeDiscard(P)
     local md=P.modeData
     -- Update statistics
     md.kpp=MATH.roundUnit(P.stat.key/P.stat.piece,.01)
-    md.mpp=MATH.roundUnit((md.movCnt+md.neatPiece)/md.neatPiece,.01)
+    md.mpp=MATH.roundUnit(md.movCnt/md.neatPiece,.01)
     md.dropRate=MATH.roundUnit(md.neatPiece/P.stat.piece*100,.1).."%"
 end
 
