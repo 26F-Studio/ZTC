@@ -620,7 +620,7 @@ function AP:render()
             -- Grid & Cells
             skin.drawFieldBackground(SET.fieldSize)
 
-            FONT.set(10)
+            GC.setFont(10)
 
             -- Field
             local F=self.field

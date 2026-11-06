@@ -7,7 +7,7 @@ local floatMixList={.3,.7,.9,.7,.6,.5,.42,.36,.3} -- Alpha curve of 'float' time
 local timer_drawFunc={
     info=function(P,time,time0)
         P:drawInfoPanel(-380,-60,160,120)
-        FONT.set(75)
+        GC.setFont(75)
         local text=("%.1f"):format(time/1000)
         GC.setColor(CLR.d4)
         GC.mStr(text,-298,-33)
@@ -16,7 +16,7 @@ local timer_drawFunc={
         GC.mStr(text,-300,-35)
     end,
     float=function(_,time,time0)
-        FONT.set(100,'bold')
+        GC.setFont(100,'bold')
         local text=("%.1f"):format(time/1000)
         local alpha=MATH.listLerp(floatMixList,time/time0)
         GC.setColor(0,0,0,alpha)

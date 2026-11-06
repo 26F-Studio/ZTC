@@ -115,8 +115,8 @@ do -- techrash
     end
     function chargeLimit.techrash_event_drawOnPlayer(P)
         P:drawInfoPanel(-380,-60,160,120)
-        FONT.set(80); GC.mStr(P.modeData.techrash,-300,-70)
-        FONT.set(30); GC.mStr(Text.target_techrash,-300,15)
+        GC.setFont(80); GC.mStr(P.modeData.techrash,-300,-70)
+        GC.setFont(30); GC.mStr(Text.target_techrash,-300,15)
     end
 end
 
@@ -225,11 +225,11 @@ do -- spin
     end
     function chargeLimit.spin_event_drawOnPlayer(P)
         P:drawInfoPanel(-380,-60,160,120)
-        FONT.set(30) GC.mStr(Text.target_line,-300,15)
+        GC.setFont(30) GC.mStr(Text.target_line,-300,15)
         if P.modeData.spin_column_pure then
             gc_setColor(columnPureTextColor[P.modeData.spin_column_pure])
         end
-        FONT.set(80) GC.mStr(P.modeData.spinClear,-300,-70)
+        GC.setFont(80) GC.mStr(P.modeData.spinClear,-300,-70)
     end
 
     function chargeLimit.spin_piece_event_init(P)
@@ -581,8 +581,8 @@ do -- tspin (legacy)
     end
     function chargeLimit.tspin_event_drawOnPlayer(P)
         P:drawInfoPanel(-380,-60,160,120)
-        FONT.set(80) GC.mStr(P.modeData.tsd,-300,-70)
-        FONT.set(30) GC.mStr(Text.target_tsd,-300,15)
+        GC.setFont(80) GC.mStr(P.modeData.tsd,-300,-70)
+        GC.setFont(30) GC.mStr(Text.target_tsd,-300,15)
     end
 end
 

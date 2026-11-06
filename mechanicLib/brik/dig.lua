@@ -206,8 +206,8 @@ end
 
 function dig.event_drawOnPlayer(P)
     P:drawInfoPanel(-380,-60,160,120)
-    FONT.set(80) GC.mStr(P.modeData.target.lineDig-P.modeData.lineDig,-300,-70)
-    FONT.set(30) GC.mStr(Text.target_line,-300,15)
+    GC.setFont(80) GC.mStr(P.modeData.target.lineDig-P.modeData.lineDig,-300,-70)
+    GC.setFont(30) GC.mStr(Text.target_line,-300,15)
 end
 
 return dig

@@ -12,7 +12,7 @@ do -- Moving
 end
 
 do -- Hold
-    local texture=GC.newText(FONT.get(80,'symbols'),"V")
+    local texture=GC.newText(GC.getFont(80,'symbols'),"V")
     local p={}
     function p:clone()
         return setmetatable({list={}},{__index=p})

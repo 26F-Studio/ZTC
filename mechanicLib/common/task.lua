@@ -134,14 +134,14 @@ function task.event_drawOnPlayer(P)
         GC.rectangle('fill',0,0,w*opt.valueShow,dh)
 
         GC.setColor(CLR.l9)
-        FONT.set(25,'bold')
+        GC.setFont(25,'bold')
         GC.print(Text[opt.title] or opt.title,20,12)
 
-        FONT.set(20)
+        GC.setFont(20)
         GC.printf(Text[opt.desc] or opt.title,10,5,w-20,'right')
 
         if opt.progress then
-            FONT.set(15)
+            GC.setFont(15)
             GC.printf(opt.progress,10,dh-30,w-20,'right')
         end
 

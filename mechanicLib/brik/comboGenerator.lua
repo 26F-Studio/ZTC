@@ -115,7 +115,7 @@ end
 
 function comboGenerator.event_drawOnPlayer(P)
     P:drawInfoPanel(-380,-60,160,120)
-    FONT.set(80) GC.mStr(P.modeData.target.combo-P.modeData.comboCount,-300,-55)
+    GC.setFont(80) GC.mStr(P.modeData.target.combo-P.modeData.comboCount,-300,-55)
 end
 
 return comboGenerator
