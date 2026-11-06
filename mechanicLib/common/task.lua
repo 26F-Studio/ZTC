@@ -1,5 +1,3 @@
-local pIndex=TABLE.pathIndex
-
 local task={}
 
 ---@class Techmino.PlayerModeData.TaskObj
