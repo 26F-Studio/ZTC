@@ -8,11 +8,11 @@ local freq={
 }
 local min,abs=math.min,math.abs
 local function cheeseDistCheck(r,his,w)
-    return
-        min(abs(r-his[1]),abs(r+w-his[1]))>=2 and
-        min(abs(r-his[2]),abs(r+w-his[2]))>=2 and
-        min(abs(r-his[3]),abs(r+w-his[3]))>=1 and
-        min(abs(r-his[4]),abs(r+w-his[4]))>=1
+    for i=1,4 do
+        local d=abs(r-his[i])
+        if min(d,w-d)<(i<=2 and 2 or 1) then return false end
+    end
+    return true
 end
 local garbageTypes={
     neat=function(P)
