@@ -19,6 +19,7 @@
 ---| 'afterRelease'    -- General(act)
 ---| 'playerInit'      -- General
 ---| 'gameStart'       -- General
+---| 'receive'         -- General(data)
 ---| 'gameOver'        -- General(reason)
 ---| 'always'          -- General
 ---|
@@ -30,10 +31,11 @@
 ---| 'afterDrop'       -- Brik, Gela
 ---| 'afterLock'       -- Brik, Gela
 ---| 'beforeClear'     -- Brik(lines)
----| 'afterClear'      -- Brik(clear), Gela
----| 'beforeCancel'    -- Brik(atk), Gela(atk)
----| 'beforeSend'      -- Brik(atk), Gela(atk)
+---| 'afterClear'      -- Brik(clear), Gela(clear)
+---| 'onAttack'        -- Brik, Gela
 ---| 'beforeDiscard'   -- Brik, Gela
+---| 'afterDiscard'    -- Brik
+---| 'garbageRelease'  -- Gela
 ---| 'drawBelowField'  -- Brik, Gela, Acry
 ---| 'drawBelowBlock'  -- Brik, Gela, Acry
 ---| 'drawBelowMarks'  -- Brik,       Acry
@@ -189,7 +191,6 @@
 ---@field drawFieldBorder fun()
 ---@field drawAsdIndicator fun(dir:number , charge:number, asdMax:number, aspMax:number, ash:number)
 ---@field drawDelayIndicator fun(mode:'spawn'|'death'|'lock', value:number)
----@field drawGarbageBuffer fun(garbageBuffer:table)
 ---@field drawLockDelayIndicator fun(freshCondition:string, freshChance:number, maxFreshTime:number, freshTime:number)
 ---
 ---@field drawNext boolean

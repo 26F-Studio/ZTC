@@ -816,26 +816,15 @@ function GP:checkClear()
     if self.clearingGroups[1] then
         self:playSound('desuffocate')
         if SET.clearDelay<=0 then
-            self:doClear()
+            local clearInfo=self:doClear()
             self:updField()
+            self:triggerEvent('afterClear',clearInfo)
+            self:triggerEvent('onAttack')
         else
             self.clearTimer=SET.clearDelay
         end
-    elseif not (SET.allowBlock and self.chain>0) then
-        local i=1
-        while true do
-            local g=self.garbageBuffer[i]
-            if not g then break end
-            if g._time==g.time then
-                self:dropGarbage(g.power)
-                rem(self.garbageBuffer,i)
-                self.garbageSum=self.garbageSum-g.power
-                i=i-1 -- Avoid index error
-            elseif g.mode==1 then
-                g._time=g._time+1
-            end
-            i=i+1
-        end
+    else
+        self:triggerEvent('garbageRelease')
         if self:canFall() then
             self:updField()
         end
@@ -846,54 +835,20 @@ function GP:doClear()
     self:playSound('chain',self.chain)
     self:playSound('clear',#self.clearingGroups)
 
-    -- Attack
-    local atk=GAME.mechLib.gela.attackSys[self.settings.atkSys].onClear(self)
-    if atk then
-        atk=GAME.initAtk(atk)
-        atk.srcMode=self.gameMode
-
-        self.stat.atk=self.stat.atk+atk.power
-
-        self:triggerEvent('beforeCancel',atk)
-
-        if self.settings.allowCancel then
-            while atk and self.garbageBuffer[1] do
-                local ap=atk.power*(atk.sharpness or 1)
-                local gbg=self.garbageBuffer[1]
-                local gp=gbg.power*(gbg.hardness or 1)
-                local cancel=min(ap,gp)
-                ap=ap-cancel
-                gp=gp-cancel
-                local newGP=floor(gp/(gbg.hardness or 1)+.5)
-                if newGP==0 then
-                    atk.power=ap/(atk.sharpness or 1)
-                    self.garbageSum=self.garbageSum-gbg.power
-                    rem(self.garbageBuffer,1)
-                else
-                    self.garbageSum=self.garbageSum-gbg.power+newGP
-                    gbg.power=newGP
-                end
-                if ap==0 then
-                    atk=nil
-                    break
-                end
-            end
-        end
-        if atk and atk.power>=.5 then
-            atk.power=floor(atk.power+.5)
-
-            self.stat.sent=self.stat.sent+atk.power
-
-            self:triggerEvent('beforeSend',atk)
-
-            GAME.send(self,atk)
-        end
-        if self.finished then return end
+    local groups=self.clearingGroups
+    local line=0
+    for i=1,#groups do
+        line=line+TABLE.getSize(groups[i])
     end
+    local clearInfo={
+        chain=self.chain,
+        groups=groups,
+        line=line,
+    }
 
     local F=self.field
-    for i=1,#self.clearingGroups do
-        local set=self.clearingGroups[i]
+    for i=1,#groups do
+        local set=groups[i]
         for k,pos in next,set do
             if k.shield then
                 k.shield=k.shield>0 and k.shield-1 or nil
@@ -907,31 +862,8 @@ function GP:doClear()
         end
     end
     self.clearingGroups={}
-end
-function GP:dropGarbage(count)
-    local F=self.field
-    local w=self.settings.fieldW
-    local curGenY=self.settings.spawnH+1
-    while count>=w do
-        for x=1,w do
-            F:setCell({
-                color=555,
-                diggable=true,
-            },x,curGenY)
-        end
-        curGenY=curGenY+1
-        count=count-w
-    end
-    if count>0 then
-        local pos={}
-        for x=1,w do pos[x]=x end
-        for n=1,count do
-            F:setCell({
-                color=555,
-                diggable=true,
-            },table.remove(pos,self:random('garbageGen',w+1-n)),curGenY)
-        end
-    end
+    self.lastClear=clearInfo
+    return clearInfo
 end
 function GP:changeFieldWidth(w,origPos)
     if w>0 and w%1==0 then
@@ -950,20 +882,6 @@ function GP:changeFieldWidth(w,origPos)
         self.field._width=w
         self.field:fresh()
     end
-end
-function GP:receive(data)
-    local g={
-        power=data.power,
-        sharpness=data.sharpness,
-        hardness=data.hardness,
-        mode=data.mode,
-        time=floor(data.time+.5),
-        _time=0,
-        fatal=data.fatal,
-        speed=data.speed,
-    }
-    ins(self.garbageBuffer,g)
-    self.garbageSum=self.garbageSum+g.power
 end
 function GP:getScriptValue(arg)
     return
@@ -1085,7 +1003,7 @@ function GP:tickStep()
             if self.clearTimer>0 then
                 self.clearTimer=self.clearTimer-1
                 if self.clearTimer<=0 then
-                    self:doClear()
+                    local clearInfo=self:doClear()
                     self:updField()
 
                     local S=self.stat
@@ -1094,7 +1012,8 @@ function GP:tickStep()
                         S.allclear=S.allclear+1
                     end
 
-                    self:triggerEvent('afterClear')
+                    self:triggerEvent('afterClear',clearInfo)
+                    self:triggerEvent('onAttack')
 
                 end
                 break
@@ -1151,14 +1070,6 @@ function GP:tickStep()
                 self:finish('suffocate')
             end
             return
-        end
-    end
-
-    -- Update garbage
-    for i=1,#self.garbageBuffer do
-        local g=self.garbageBuffer[i]
-        if g.mode==0 and g._time<g.time then
-            g._time=g._time+1
         end
     end
 
@@ -1330,9 +1241,6 @@ function GP:render()
         skin.drawDelayIndicator('lock',self.lockTimer/SET.lockDelay)
     end
 
-    -- Garbage buffer
-    skin.drawGarbageBuffer(self.garbageBuffer)
-
     -- Lock delay indicator
     skin.drawLockDelayIndicator(SET.freshCondition,self.freshChance,self.time<SET.readyDelay and (self.time/SET.readyDelay)^2.6 or self.freshTime/SET.maxFreshTime)
 
@@ -1442,11 +1350,6 @@ local baseEnv={
     maxFreshChance=15,
     maxFreshTime=6200,
 
-    -- Attack
-    atkSys='classic',
-    allowCancel=true,
-    allowBlock=true,
-
     -- Control
     asd=122,
     asp=26,
@@ -1513,9 +1416,10 @@ function GP.new(remote)
         afterDrop={},
         afterLock={},
         afterClear={},
-        beforeCancel={},
-        beforeSend={},
+        onAttack={},
         beforeDiscard={},
+        garbageRelease={},
+        receive={},
 
         -- Update
         always={},
@@ -1569,10 +1473,6 @@ function GP:initialize()
 
     self.pieceCount=0
     self.chain=0
-
-    GAME.mechLib.gela.attackSys[self.settings.atkSys].init(self)
-    self.garbageBuffer={}
-    self.garbageSum=0
 
     self.nextQueue={}
     self.seqData={}

@@ -577,14 +577,6 @@ function BP:setSequenceGen(seqData,args)
     assert(self:seqGen(self.seqData,true)==nil,"First call of sequence generator must return nil")
     self:freshNextQueue()
 end
----@param atkSys string | Techmino.Mech.Brik.AttackSysName
-function BP:setAttackSystem(atkSys)
-    self.settings.spin_immobile=false
-    self.settings.spin_corners=false
-    self.settings.combo_sound=false
-    self.settings.atkSys=atkSys
-    GAME.mechLib.brik.attackSys[atkSys].init(self)
-end
 function BP:freshNextQueue()
     while #self.nextQueue<max(self.settings.nextSlot,1) do
         local shape=self:seqGen(self.seqData)
@@ -840,83 +832,6 @@ end
 function BP:isSuffocate()
     return self.hand and self:ifoverlap(self.hand.matrix,self.handX,self.handY)
 end
-function BP:parseAtkInfo(g)
-    -- TODO: 'speed' not applied
-
-    -- Calculate hole count and splitting probabality
-    local count=1+max((g.fatal-50)/20,0)
-    local splitRate=0
-    if count~=floor(count) then
-        if self:random('atkRound')>count%1 then
-            splitRate=count%1/2
-            count=floor(count)
-        else
-            splitRate=-(count%1/2)
-            count=ceil(count)
-        end
-    end
-
-    local copyRate=1-g.fatal/40
-    local sandwichRate=(g.fatal-20)/120
-
-    return count,splitRate,copyRate,sandwichRate
-end
-function BP:calculateHolePos(count,splitRate,copyRate,sandwichRate)
-    local holePos={}
-    local F=self.field
-    local weights=TABLE.new(.03,self.settings.fieldW)
-
-    -- Check bottom state of every column and calculate weight
-    for x=1,#weights do
-        if F:getCell(x,1) then
-            if not F:getCell(x,2) then
-                weights[x]=weights[x]+sandwichRate
-            elseif not F:getCell(x,3) then
-                weights[x]=weights[x]+sandwichRate/2
-            end
-        else
-            -- Get hole height
-            local y=2
-            while y<4 and not F:getCell(x,y) do
-                y=y+1
-            end
-            -- Height-Score rate: 2 → 1x, 3 → 1.5x, 4(max) → 2x
-            weights[x]=weights[x]+copyRate*y/2
-        end
-        weights[x]=clamp(weights[x],.03,1)
-    end
-
-    -- Pick hole position
-    for n=1,count do
-        local sum=0
-        for i=1,#weights do sum=sum+weights[i] end
-        if sum<0 then
-            error("WTF why sum of weights is 0")
-        end
-
-        -- local str=""
-        -- for i=1,#weights do
-        --     str=str..string.format("%03d",weights[i]*100).." "
-        -- end
-        -- print(str)
-
-        local r=sum*self:random('attackHoleGen')
-        for i=1,#weights do
-            r=r-weights[i]
-            if r<=0 then
-                r=i
-                break
-            end
-        end
-        ins(holePos,r)
-        if n<count then
-            weights[r]=.03
-            if r>1        then weights[r-1]=clamp(weights[r-1]-splitRate,.03,1) end
-            if r<#weights then weights[r+1]=clamp(weights[r+1]-splitRate,.03,1) end
-        end
-    end
-    return holePos
-end
 function BP:moveLeft(ifInit)
     if not self:ifoverlap(self.hand.matrix,self.handX-1,self.handY) then
         self:moveHand('moveX',-1,true,false,ifInit)
@@ -1085,9 +1000,6 @@ function BP:hold_float()
 end
 ---@param fullLines integer[] (ascending)
 function BP:doClear(fullLines)
-
-    self:triggerEvent('beforeClear',fullLines)
-
     GAME.mechLib.brik.clearRule[self.settings.clearRule].clear(self,fullLines)
     local n=#fullLines
     local his={
@@ -1114,9 +1026,6 @@ function BP:doClear(fullLines)
     if self.field:getHeight()==0 then
         S.allclear=S.allclear+1
     end
-
-    self:triggerEvent('afterClear',his)
-
 end
 
 function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
@@ -1170,62 +1079,22 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
         self.lastMovement.clear=fullLines
         self.lastMovement.combo=self.combo
 
-        self:doClear(fullLines)
-        if self.finished then return end
+        self:triggerEvent('beforeClear',fullLines)
 
-        -- ?
-        -- if SET.clearRule=='line' then end
+        self:doClear(fullLines)
+
+        self:triggerEvent('afterClear',self.clearHistory[#self.clearHistory])
+
+        if self.finished then return end
     else
         self.combo=0
     end
 
-    -- Attack
-    local atk=GAME.mechLib.brik.attackSys[SET.atkSys].onDrop(self)
-    if atk then
-        atk=GAME.initAtk(atk)
-        atk.srcMode=self.gameMode
-
-        self.stat.atk=self.stat.atk+atk.power
-
-        self:triggerEvent('beforeCancel',atk)
-
-        if SET.allowCancel then
-            while atk and self.garbageBuffer[1] do
-                local ap=atk.power*(atk.sharpness or 1)
-                local gbg=self.garbageBuffer[1]
-                local gp=gbg.power*(gbg.hardness or 1)
-                local cancel=min(ap,gp)
-                ap=ap-cancel
-                gp=gp-cancel
-                local newGP=floor(gp/(gbg.hardness or 1)+.5)
-                if newGP==0 then
-                    atk.power=ap/(atk.sharpness or 1)
-                    self.garbageSum=self.garbageSum-gbg.power
-                    rem(self.garbageBuffer,1)
-                else
-                    self.garbageSum=self.garbageSum-gbg.power+newGP
-                    gbg.power=newGP
-                end
-                if ap==0 then
-                    atk=nil
-                    break
-                end
-            end
-        end
-        if atk and atk.power>=.5 then
-            atk.power=floor(atk.power+.5)
-
-            self.stat.sent=self.stat.sent+atk.power
-
-            self:triggerEvent('beforeSend',atk)
-
-            GAME.send(self,atk)
-        end
-        if self.finished then return end
-    end
+    -- Attack system
+    self:triggerEvent('onAttack')
 
     -- Lockout check
-    if self.handY>SET.lockoutH and (SET.strictLockout or not fullLines)  then
+    if self.handY>SET.lockoutH and (SET.strictLockout or not fullLines) then
         self:finish('lockout')
         return
     end
@@ -1235,29 +1104,10 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
     -- Discard hand
     self.hand=false
     self.handX,self.handY=false,false
+
     if self.finished then return end
 
-    -- Update & Release garbage
-    if not (SET.allowBlock and fullLines) then
-        local iBuffer=1
-        while true do
-            local g=self.garbageBuffer[iBuffer]
-            if not g then break end
-            if g._time==g.time then
-                local holePos=self:calculateHolePos(self:parseAtkInfo(g))
-
-                -- Pushing up
-                self:riseGarbage(holePos,g.power)
-
-                rem(self.garbageBuffer,iBuffer)
-                self.garbageSum=self.garbageSum-g.power
-                iBuffer=iBuffer-1 -- Avoid index error
-            elseif g.mode==1 then
-                g._time=g._time+1
-            end
-            iBuffer=iBuffer+1
-        end
-    end
+    self:triggerEvent('afterDiscard')
 
     self.spawnTimer=SET.spawnDelay+(fullLines and GAME.mechLib.brik.clearRule[SET.clearRule].getDelay(self,fullLines) or 0)
 
@@ -1432,20 +1282,6 @@ function BP:changeFieldWidth(w,origPos)
         self.field:fresh()
     end
 end
-function BP:receive(data)
-    local g={
-        power=data.power,
-        sharpness=data.sharpness,
-        hardness=data.hardness,
-        mode=data.mode,
-        time=floor(data.time+.5),
-        _time=0,
-        fatal=data.fatal,
-        speed=data.speed,
-    }
-    ins(self.garbageBuffer,g)
-    self.garbageSum=self.garbageSum+g.power
-end
 function BP:getScriptValue(arg)
     return
         arg.d=='field_width' and self.settings.fieldW or
@@ -1606,14 +1442,6 @@ function BP:tickStep()
                 self:finish('suffocate')
             end
             return
-        end
-    end
-
-    -- Update garbage
-    for i=1,#self.garbageBuffer do
-        local g=self.garbageBuffer[i]
-        if g.mode==0 and g._time<g.time then
-            g._time=g._time+1
         end
     end
 
@@ -1857,9 +1685,6 @@ function BP:render()
         skin.drawDelayIndicator('lock',self.lockTimer/SET.lockDelay)
     end
 
-    -- Garbage buffer
-    skin.drawGarbageBuffer(self.garbageBuffer)
-
     -- Lock delay indicator
     skin.drawLockDelayIndicator(SET.freshCondition,self.freshChance,self.time<SET.readyDelay and (self.time/SET.readyDelay)^2.6 or self.freshTime/SET.maxFreshTime)
 
@@ -2029,14 +1854,11 @@ local baseEnv={
     risingAcceleration=.001,
     risingDeceleration=.003,
 
-    -- Attack
+    -- Rotation
     rotSys='TRS',             ---@type Techmino.Mech.Brik.RotationSysName
     spin_immobile=false,      ---@type boolean
     spin_corners=false,       ---@type false | number
     combo_sound=false,        ---@type boolean
-    atkSys='none',            ---@type Techmino.Mech.Brik.AttackSysName
-    allowCancel=true,         ---@type boolean
-    allowBlock=true,          ---@type boolean
 
     -- Control
     asd=122,                      -- Auto shift delay
@@ -2122,9 +1944,10 @@ function BP.new(remote)
         afterLock={},
         beforeClear={},
         afterClear={},
-        beforeCancel={},
-        beforeSend={},
+        onAttack={},
         beforeDiscard={},
+        afterDiscard={},
+        receive={},
 
         -- Update
         always={},
@@ -2170,10 +1993,6 @@ function BP:initialize()
 
     self.pieceCount=0
     self.combo=0
-
-    if self.settings.atkSys~='none' then self:setAttackSystem(self.settings.atkSys) end
-    self.garbageBuffer={}
-    self.garbageSum=0
 
     self.totalCellCount=0
     self.nextQueue={}

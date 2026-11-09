@@ -6,6 +6,9 @@ local GC=GC
 local survivor={}
 
 function survivor.event_playerInit(P)
+    GAME.mechLib.brik.atkSendSys.init(P,'basic')
+    GAME.mechLib.brik.atkRecvSys.init(P,'std',{allowCancel=true,allowBlock=true})
+
     local md=P.modeData
     md.curWaveTime=1
     md.waveTimer=0
@@ -14,8 +17,8 @@ end
 
 function survivor.event_drawOnPlayer(P)
     P:drawInfoPanel(-380,-60,160,120)
-    GC.setFont(80) GC.mStr(P.modeData.wave,-300,-70)
-    GC.setFont(30) GC.mStr(Text.target_wave,-300,15)
+    GC.setFont(80); GC.mStr(P.modeData.wave,-300,-70)
+    GC.setFont(30); GC.mStr(Text.target_wave,-300,15)
 
     local cd=P.modeData.waveTimer/P.modeData.curWaveTime
     GC.setLineWidth(10)
@@ -31,9 +34,9 @@ function survivor.scattered_event_always(P)
     if not P.timing then return end
     local md=P.modeData
     if md.waveTimer>0 then
-        md.waveTimer=min(md.waveTimer-1,(P.field:getHeight()+3*P.garbageSum)*260)
+        md.waveTimer=min(md.waveTimer-1,(P.field:getHeight()+3*md.atkSys.sum)*260)
     end
-    if md.waveTimer<=0 and P.garbageSum<=max(15-P.field:getHeight()/2,8) then
+    if md.waveTimer<=0 and md.atkSys.sum<=max(15-P.field:getHeight()/2,8) then
         md.wave=md.wave+1
 
         local wave=md.wave
@@ -43,21 +46,11 @@ function survivor.scattered_event_always(P)
             math.max(2000-(wave-150)*10,1000)
         )
         md.waveTimer=md.curWaveTime
-        GAME.send(false,GAME.initAtk{
+        GAME.send(false,{
             target=GAME.mainID,
             power=P:random('survivor',0,10)+P:random('survivor',-5,5)>=P.field:getHeight() and 2 or 1,
-            hardness=wave<60 and 2 or 3,
             mode=0,
             time=wave<50 and 100e3/(50+wave)-1000 or 0,
-            fatal=MATH.clamp(
-                (
-                    wave<100 and MATH.interpolate(0,20,100,60,wave) or
-                    wave<200 and MATH.interpolate(100,60,200,100,wave) or
-                    100
-                )+math.floor((P:random('survivor')*2-1)*min(wave,100)/5),
-                0,100
-            ),
-            -- speed=?,
         })
     end
 end
@@ -65,9 +58,9 @@ function survivor.power_event_always(P)
     if not P.timing then return end
     local md=P.modeData
     if md.waveTimer>0 then
-        md.waveTimer=min(md.waveTimer-1,(P.field:getHeight()+3*P.garbageSum)*260)
+        md.waveTimer=min(md.waveTimer-1,(P.field:getHeight()+3*md.atkSys.sum)*260)
     end
-    if md.waveTimer<=0 and P.garbageSum<=max(20-P.field:getHeight(),12) then
+    if md.waveTimer<=0 and md.atkSys.sum<=max(20-P.field:getHeight(),12) then
         md.wave=md.wave+1
 
         local wave=md.wave
@@ -77,15 +70,13 @@ function survivor.power_event_always(P)
             max(MATH.interpolate(80,1500,150,800,wave),800)
         )
         md.waveTimer=md.curWaveTime
-        GAME.send(false,GAME.initAtk{
+        GAME.send(false,{
             target=GAME.mainID,
             power=4+P:random('survivor',0,MATH.clamp(math.floor(wave/30-P.field:getHeight()/10),0,3)),
             mode=0,
             time=
                 (wave<50 and 100e3/(100+2*wave)+500 or 1000)+
-                MATH.clamp(400-wave,150,350)*max(P.field:getHeight()+P.garbageSum-8,0),
-            fatal=math.floor(min(30+wave/2,50)),
-            -- speed=?,
+                MATH.clamp(400-wave,150,350)*max(P.field:getHeight()+md.atkSys.sum-8,0),
         })
     end
 end
@@ -93,9 +84,9 @@ function survivor.spike_event_always(P)
     if not P.timing then return end
     local md=P.modeData
     if md.waveTimer>0 then
-        md.waveTimer=min(md.waveTimer-1,P.garbageSum*620)
+        md.waveTimer=min(md.waveTimer-1,md.atkSys.sum*620)
     end
-    if md.waveTimer<=0 and P.garbageSum<=10 then
+    if md.waveTimer<=0 and md.atkSys.sum<=10 then
         md.wave=md.wave+1
 
         local wave=md.wave
@@ -106,7 +97,7 @@ function survivor.spike_event_always(P)
         )
         md.waveTimer=md.curWaveTime
         for i=1,3 do
-            GAME.send(false,GAME.initAtk{
+            GAME.send(false,{
                 target=GAME.mainID,
                 power=
                     2+2*i+ -- Basic Attack (4+6+8)
@@ -118,32 +109,40 @@ function survivor.spike_event_always(P)
                 time=
                     max(6000-50*wave,4000)+ -- Basic delay (from 6s to 4s on wave 40)
                     (i-1)*max(3000-wave*30,1500), -- Split time (from 3s to 1.5s on wave 50)
-                fatal=floor(min(30+wave/4,50)), -- Fatal (from 30 to 50 on wave 80)
-                -- speed=?,
             })
         end
 
     end
 end
 
-function survivor.backfire_storePower_event_beforeCancel(P,atk)
+function survivor.backfire_storePower_event_beforeCancel(P)
+    local atk=P.modeData.atkSys.attack
+    if not atk then return end
     P.modeData._currentPower=atk.power
 end
 
-function survivor.backfire_triplePower_event_beforeCancel(_,atk)
+function survivor.backfire_triplePower_event_beforeCancel(P)
+    local atk=P.modeData.atkSys.attack
+    if not atk then return end
     atk.power=atk.power*3
 end
 
-function survivor.backfire_easy_event_beforeSend(P,atk) -- Send nerfed attack (when cancelling) to self
-    P:receive(atk)
+function survivor.backfire_easy_event_beforeSend(P) -- Send nerfed attack (when cancelling) to self
+    local atk=P.modeData.atkSys.attack
+    if not atk then return end
+    P:triggerEvent('receive',atk)
 end
 
-function survivor.backfire_normal_event_beforeSend(P,atk) -- Recover attack's original power if exist after cancelling, then send it to self
+function survivor.backfire_normal_event_beforeSend(P) -- Recover attack's original power if exist after cancelling, then send it to self
+    local atk=P.modeData.atkSys.attack
+    if not atk then return end
     atk.power,P.modeData._currentPower=P.modeData._currentPower
-    P:receive(atk)
+    P:triggerEvent('receive',atk)
 end
 
-function survivor.backfire_break_event_beforeSend(P,atk) -- Recover power Like "normal" one, but break it into small attacks
+function survivor.backfire_break_event_beforeSend(P) -- Recover power Like "normal" one, but break it into small attacks
+    local atk=P.modeData.atkSys.attack
+    if not atk then return end
     local powerList={}
     local section=0
     for i=1,P.modeData._currentPower do
@@ -155,7 +154,7 @@ function survivor.backfire_break_event_beforeSend(P,atk) -- Recover power Like "
     end
     for i=1,#powerList do
         atk.power=powerList[i]
-        P:receive(atk)
+        P:triggerEvent('receive',atk)
     end
     P.modeData._currentPower=nil
 end

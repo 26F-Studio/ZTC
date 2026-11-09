@@ -273,9 +273,10 @@ local function setSafeEnv(func)
     sandBoxEnv.GAME.mechLib=GAME.mechLib -- Update in case it changes during game
     setfenv(func,TABLE.copyAll(sandBoxEnv))
 end
+--- Priority:
 ---- Statistic: -1e99
----- Music: 1e62
 ---- Default: 0
+---- Music: 1e62
 ---@param name Techmino.EventName
 ---@param E Techmino.Event | Techmino.Event[]
 function P:addEvent(name,E)

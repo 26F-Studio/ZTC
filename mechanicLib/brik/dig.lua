@@ -91,27 +91,20 @@ local garbageTypes={
 
         P:riseGarbage(r)
     end,
-    ruins=function(P)
-        P:riseGarbage(P:calculateHolePos(
-            8,  -- count
-            0,  -- splitRate
-            0,  -- copyRate
-            -.5 -- sandwichRate
-        ))
-    end,
 
     line=function(P)
-        if not P.modeData.dig_line_init then
-            P.modeData.dig_line_init=true
-            P.modeData.risePosition=math.floor((P.settings.fieldW+1)/2+P:random('dig'))
-            P.modeData.riseDirection=P:random('dig',0,1)*2-1
+        local md=P.modeData
+        if not md.dig_line_init then
+            md.dig_line_init=true
+            md.risePosition=math.floor((P.settings.fieldW+1)/2+P:random('dig'))
+            md.riseDirection=P:random('dig',0,1)*2-1
         end
-        P:riseGarbage(P.modeData.risePosition)
-        if P.modeData.risePosition<=1 or P.modeData.risePosition>=P.settings.fieldW then
-            P.modeData.riseDirection=-P.modeData.riseDirection
+        P:riseGarbage(md.risePosition)
+        if md.risePosition<=1 or md.risePosition>=P.settings.fieldW then
+            md.riseDirection=-md.riseDirection
         end
-        P.modeData.risePosition=P.modeData.risePosition+P.modeData.riseDirection
-        P.modeData.garbageRised=P.modeData.garbageRised+1
+        md.risePosition=md.risePosition+md.riseDirection
+        md.garbageRised=md.garbageRised+1
     end,
     drill=function(P)
         if not P.modeData.dig_drill_init then
@@ -148,21 +141,11 @@ local garbageTypes={
         P.modeData.garbageRised=P.modeData.garbageRised+1
     end,
     shale=function(P)
-        P:riseGarbage(P:calculateHolePos(
-            P:random('dig',2,3), -- count
-            -.2, -- splitRate
-            -.1, -- copyRate
-            -1   -- sandwichRate
-        ))
+        P:riseGarbage()
         P.modeData.garbageRised=P.modeData.garbageRised+1
     end,
     volcanics=function(P)
-        P:riseGarbage(P:calculateHolePos(
-            P:random('dig',3,4), -- count
-            .2,  -- splitRate
-            -.1, -- copyRate
-            .1   -- sandwichRate
-        ))
+        P:riseGarbage()
         P.modeData.garbageRised=P.modeData.garbageRised+1
     end,
     checker=function(P)

@@ -15,7 +15,8 @@ local mechLib={
         actions=require'brik/actions',
         sequence=require'brik/sequence',
         clearRule=require'brik/clearRule',
-        attackSys=require'brik/attackSys',
+        atkSendSys=require'brik/atkSendSys',
+        atkRecvSys=require'brik/atkRecvSys',
         stack=require'brik/stack',
         squeeze=require'brik/squeeze',
         saveload=require'brik/saveload',
@@ -35,7 +36,8 @@ local mechLib={
         actions=require'gela/actions',
         sequence=require'gela/sequence',
         colorSet=require'gela/colorSet',
-        attackSys=require'gela/attackSys',
+        atkSendSys=require'gela/atkSendSys',
+        atkRecvSys=require'gela/atkRecvSys',
         misc=require'gela/misc',
     },
     acry={
@@ -43,7 +45,8 @@ local mechLib={
         actions=require'acry/actions',
         propSys=require'acry/propSys',
         mergeSys=require'acry/mergeSys',
-        attackSys=require'acry/attackSys',
+        atkSendSys=require'acry/atkSendSys',
+        atkRecvSys=require'acry/atkRecvSys',
     },
 }
 return mechLib

@@ -210,19 +210,6 @@ function AP:matchExist()
 end
 function AP:changeFieldSize(w,h,origX,origY)
 end
-function AP:receive(data)
-    local B={
-        power=data.power,
-        sharpness=data.sharpness,
-        hardness=data.hardness,
-        mode=data.mode,
-        time=floor(data.time+.5),
-        _time=0,
-        fatal=data.fatal,
-        speed=data.speed,
-    }
-    ins(self.garbageBuffer,B)
-end
 function AP:getScriptValue(arg)
     return
         arg.d=='field_size' and self.settings.fieldSize or
@@ -573,14 +560,6 @@ function AP:tickStep()
         TABLE.clear(list)
     end
 
-    -- Update garbage
-    for i=1,#self.garbageBuffer do
-        local g=self.garbageBuffer[i]
-        if g.mode==0 and g._time<g.time then
-            g._time=g._time+1
-        end
-    end
-
     if IsKeyDown('f4') then
         -- TODO: debug
         local acry=F[1][1]
@@ -666,9 +645,6 @@ function AP:render()
     -- Field border
     skin.drawFieldBorder()
 
-    -- Garbage buffer
-    skin.drawGarbageBuffer(self.garbageBuffer)
-
     -- Timer
     skin.drawTime(self.gameTime)
 
@@ -721,8 +697,7 @@ local baseEnv={
     clearDelay=250,
     fallAcceleration=1/45000,
 
-    -- Attack
-    atkSys='none',
+    -- Merge
     mergeSys='modern',
     multiMove=true,
     swap=true,
@@ -761,6 +736,9 @@ function AP.new(remote)
         gameOver={},
 
         -- Prop Event
+
+        -- Attack
+        receive={},
 
         -- Update
         always={},
@@ -811,8 +789,6 @@ function AP:initialize()
     self.moveChargeH=0
     self.moveDirV=1
     self.moveChargeV=0
-
-    self.garbageBuffer={}
 
     self.totalCellCount=0
 

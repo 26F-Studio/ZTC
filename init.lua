@@ -454,48 +454,8 @@ function GAME.cursorUp(x,y,tid,id)
     end
 end
 
----@class Techmino.Game.Attack
----@field srcMode Techmino.Player.Type
----@field power number -∞~∞, no default
----@field sharpness number 0~∞, default to 1, how strong the attack can cancel the others
----@field hardness number 0~∞, default to 1, how strong the attack can defend the others
----@field mode number 0 | 1, default to 0, 0: trigger by time, 1:trigger by step
----@field time number 0~∞, default to 0, ms / step
----@field fatal number 0~100, default to 30, percentage
----@field speed number 0~100, default to 30, percentage
----@field target number | Techmino.Player | nil default to nil
-
-local atkTemplate={
-    sharpness=1,
-    hardness=1,
-    mode=0,
-    time=0,
-    fatal=30,
-    speed=30,
-}
-
----@param atk Techmino.Game.Attack
-function GAME.initAtk(atk) -- Normalize the attack object
-    assert(type(atk)=='table',"GAME.initAtk: need table")
-
-    TABLE.updateMissing(atk,atkTemplate)
-
-    assert(type(atk.power)=='number',"GAME.initAtk: .power need number")
-    assert(type(atk.sharpness)=='number' and atk.sharpness>=0,"GAME.initAtk: .sharpness need non-negative number")
-    assert(type(atk.hardness)=='number' and atk.hardness>=0,"GAME.initAtk: .hardness need non-negative number")
-    assert(atk.mode==0 or atk.mode==1,"mode not 0 or 1")
-    assert(type(atk.time)=='number' and atk.time>=0,"GAME.initAtk: .time need non-negative number")
-    assert(type(atk.fatal)=='number',"GAME.initAtk: .fatal need number")
-    assert(type(atk.speed)=='number',"GAME.initAtk: .speed need number")
-    if atk.mode==1 then atk.time=math.floor(atk.time+.5) end
-    atk.fatal=MATH.clamp(math.floor(atk.fatal+.5),0,100)
-    atk.speed=MATH.clamp(math.floor(atk.speed+.5),0,100)
-
-    return atk
-end
-
 ---@param sender Techmino.Player | number | false
----@param atk Techmino.Game.Attack?
+---@param atk table?
 function GAME.send(sender,atk)
     if not atk then return end
 
@@ -535,7 +495,7 @@ function GAME.send(sender,atk)
 
     -- Sending airmail
     if target then
-        target:receive(atk)
+        target:triggerEvent('receive',atk)
     end
 end
 
