@@ -7,7 +7,7 @@ local survivor={}
 
 function survivor.event_playerInit(P)
     GAME.mechLib.brik.atkSendSys.init(P,'basic')
-    GAME.mechLib.brik.atkRecvSys.init(P,'modern',{allowCancel=true,allowBlock=true})
+    GAME.mechLib.brik.atkRecvSys.init(P,'modern')
 
     local md=P.modeData
     md.curWaveTime=1

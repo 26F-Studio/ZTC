@@ -16,8 +16,8 @@ function atkRecvSys.init(P,mode,opts)
 
     local A=P.modeData.atkSys
     A.recvMode=mode
-    for k,v in next,opts or {} do A[k]=v end
     atkRecvSys[mode..'_init'](P)
+    for k,v in next,opts or NONE do A[k]=v end
 end
 
 do
@@ -25,6 +25,11 @@ do
         local A=P.modeData.atkSys
         A.buffer=A.buffer or {}
         A.sum=A.sum or 0
+        A.cancellable=true
+        A.tickOnClear=true
+        A.triggerOnClear=false
+        A.tickAmount=1e99
+        A.triggerAmount=1e99
 
         P:addEvent('receive',atkRecvSys.modern_event_receive)
         P:addEvent('always',atkRecvSys.modern_event_always)
@@ -46,7 +51,7 @@ do
     function atkRecvSys.modern_event_onAttack_cancel(P)
         local A=P.modeData.atkSys
         local atk=A.attack
-        if not atk or not A.allowCancel then return end
+        if not atk or not A.cancellable then return end
 
         local buffer=A.buffer
         while atk and buffer[1] do
@@ -72,14 +77,16 @@ do
     end
     function atkRecvSys.modern_event_afterDiscard(P)
         local A=P.modeData.atkSys
-        if A.allowBlock and P.lastMovement.clear then return end
+        local clear=P.lastMovement.clear
+        local canTrigger=not clear or A.triggerOnClear
+        local canTick=not clear or A.tickOnClear
 
         local buffer=A.buffer
         local iBuffer=1
-        while true do
+        -- Use original queue positions, even when earlier attacks are removed.
+        for i=1,#buffer do
             local g=buffer[iBuffer]
-            if not g then break end
-            if g._time==g.time then
+            if canTrigger and i<=A.triggerAmount and g._time==g.time then
                 if not A.holePosHis then
                     A.holePosHis={}
                     for i=1,4 do A.holePosHis[i]=P:random('attackHoleGen',P.settings.fieldW) end
@@ -103,7 +110,7 @@ do
                 rem(buffer,iBuffer)
                 A.sum=A.sum-g.power
                 iBuffer=iBuffer-1
-            elseif g.mode==1 then
+            elseif canTick and i<=A.tickAmount and g.mode==1 and g._time<g.time then
                 g._time=g._time+1
             end
             iBuffer=iBuffer+1
@@ -112,7 +119,7 @@ do
     function atkRecvSys.modern_event_always(P)
         local A=P.modeData.atkSys
         local buffer=A.buffer
-        for i=1,#buffer do
+        for i=1,math.min(#buffer,A.tickAmount) do
             local g=buffer[i]
             if g.mode==0 and g._time<g.time then
                 g._time=g._time+1

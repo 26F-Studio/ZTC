@@ -18,7 +18,7 @@ function atkSendSys.init(P,mode,opts)
     local A=P.modeData.atkSys
     A.atkMode=mode
     A.attack=nil
-    for k,v in next,opts or {} do A[k]=v end
+    for k,v in next,opts or NONE do A[k]=v end
 
     P:addEvent('onAttack',{-100,assert(atkSendSys[mode..'_calc'],"Unknown atk send system: "..tostring(mode))})
     P:addEvent('onAttack',{100,atkSendSys.event_send})

@@ -15,7 +15,7 @@ function atkRecvSys.init(P,mode,opts)
 
     local A=P.modeData.atkSys
     A.recvMode=mode
-    for k,v in next,opts or {} do A[k]=v end
+    for k,v in next,opts or NONE do A[k]=v end
 
     local initialize=atkRecvSys[mode..'_event_init']
     if initialize then initialize(P) end
