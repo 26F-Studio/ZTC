@@ -950,9 +950,7 @@ function P:unserialize(data)
 
     self:unserialize_custom()
 end
-function P:unserialize_custom()
-    -- Flandre kawaii
-end
+function P.unserialize_custom() end -- Virtual method
 
 --------------------------------------------------------------
 

@@ -331,7 +331,7 @@ messy=function(P,d,init) -- no repeating random
 end,
 
 random=function(P,d,init) -- pure random
-    if init then d.flandre='cute' return end
+    if init then d.flandre='kawaii' return end
     return P:random('seq',7)
 end,
 
