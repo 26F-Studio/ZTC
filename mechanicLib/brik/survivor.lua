@@ -46,8 +46,7 @@ function survivor.scattered_event_always(P)
             math.max(2000-(wave-150)*10,1000)
         )
         md.waveTimer=md.curWaveTime
-        GAME.send(false,{
-            target=GAME.mainID,
+        P:triggerEvent('receive',{
             power=P:random('survivor',0,10)+P:random('survivor',-5,5)>=P.field:getHeight() and 2 or 1,
             mode=0,
             time=wave<50 and 100e3/(50+wave)-1000 or 0,
@@ -70,8 +69,7 @@ function survivor.power_event_always(P)
             max(MATH.interpolate(80,1500,150,800,wave),800)
         )
         md.waveTimer=md.curWaveTime
-        GAME.send(false,{
-            target=GAME.mainID,
+        P:triggerEvent('receive',{
             power=4+P:random('survivor',0,MATH.clamp(math.floor(wave/30-P.field:getHeight()/10),0,3)),
             mode=0,
             time=
@@ -97,8 +95,7 @@ function survivor.spike_event_always(P)
         )
         md.waveTimer=md.curWaveTime
         for i=1,3 do
-            GAME.send(false,{
-                target=GAME.mainID,
+            P:triggerEvent('receive',{
                 power=
                     2+2*i+ -- Basic Attack (4+6+8)
                     P:random(

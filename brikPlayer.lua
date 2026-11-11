@@ -1266,6 +1266,7 @@ function BP:setField(arg)
     end
     self:freshGhost()
 end
+---**Warning:** this doesn't really touch field object
 function BP:changeFieldWidth(w,origPos)
     if w>0 and w%1==0 then
         if not origPos then origPos=1 end

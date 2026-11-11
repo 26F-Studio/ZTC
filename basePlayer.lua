@@ -348,7 +348,7 @@ function P:finish(reason)
 
     GAME.checkFinish()
 
-    -- TODO: Just for temporary use
+    -- TODO: Temporary use
     if self.isMain then
         MSG(reason=='win' and 'check' or 'error',finishTexts[reason] or finishTexts.other,6.26)
         self:playSound('finish_'..reason)

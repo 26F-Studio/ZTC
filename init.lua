@@ -390,7 +390,7 @@ end
 
 function GAME.setMain(id)
     if GAME.mainPlayer then
-        GAME.playerMap[GAME.mainPlayer].isMain=false
+        GAME.mainPlayer.isMain=false
         GAME.mainID=false
         GAME.mainPlayer=false
     end
