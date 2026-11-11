@@ -544,7 +544,7 @@ do -- Haunted
             P.modeData.ghostLight_Map={}
             P:addEvent('always',GAME.mechLib.brik.misc.haunted_always)
             P:addEvent('afterLock',GAME.mechLib.brik.misc.haunted_afterLock)
-            -- P:addEvent('drawInField',mechLib.brik.misc.haunted_drawInField)
+            -- P:addEvent('drawInField',GAME.mechLib.brik.misc.haunted_drawInField)
         end
         P.modeData.ghostLight_spreadTime=spreadTime or P.modeData.ghostLight_spreadTime or default_spreadTime
         P.modeData.ghostLight_lifeTime=lifeTime or P.modeData.ghostLight_lifeTime or default_lifeTime
