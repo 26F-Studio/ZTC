@@ -1019,7 +1019,7 @@ function BP:doClear(fullLines)
 
     local S=self.stat
     local line=his.line
-    S.clearTime=S.clearTime+1
+    S.clearCount=S.clearCount+1
     S.line=S.line+line
     if line%1==0 and line>0 then
         S.clears[line]=(S.clears[line] or 0)+1
@@ -1978,7 +1978,7 @@ function BP.new(remote)
         spawn=0,
         piece=0,
         line=0,
-        clearTime=0,
+        clearCount=0,
         clears={0,0,0,0},
         allclear=0,
 

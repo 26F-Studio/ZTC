@@ -758,7 +758,7 @@ function AP.new(remote)
         spawn=0,
         piece=0,
         line=0,
-        clearTime=0,
+        clearCount=0,
         allclear=0,
 
         atk=0,

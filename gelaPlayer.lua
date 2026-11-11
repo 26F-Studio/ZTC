@@ -1008,7 +1008,7 @@ function GP:tickStep()
                     self:updField()
 
                     local S=self.stat
-                    S.clearTime=S.clearTime+1
+                    S.clearCount=S.clearCount+1
                     if self.field:getHeight()==0 then
                         S.allclear=S.allclear+1
                     end
@@ -1445,7 +1445,7 @@ function GP.new(remote)
         spawn=0,
         piece=0,
         line=0,
-        clearTime=0,
+        clearCount=0,
         allclear=0,
 
         atk=0,

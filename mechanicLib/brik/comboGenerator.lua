@@ -74,7 +74,7 @@ function comboGenerator.event_playerInit(P)
     P.modeData.comboCount=0
     P.modeData.levelRemain=0
     P.modeData.levelsCleared=0
-    P.modeData._curClearTime=false
+    P.modeData._curClearCount=false
     newMap(P)
 end
 function comboGenerator.event_afterDrop(P)
@@ -88,14 +88,14 @@ function comboGenerator.event_afterDrop(P)
     end
 end
 function comboGenerator.event_afterLock(P)
-    P.modeData._curClearTime=P.stat.clearTime
+    P.modeData._curClearCount=P.stat.clearCount
 end
 function comboGenerator.event_afterClear(P,clear)
     P.modeData.levelRemain=P.modeData.levelRemain-clear.line
 end
 function comboGenerator.event_beforeDiscard(P)
     local md=P.modeData
-    if P.stat.clearTime>md._curClearTime then
+    if P.stat.clearCount>md._curClearCount then
         if not md.levelStarted then
             md.levelStarted=true
         else
