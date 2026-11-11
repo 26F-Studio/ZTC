@@ -688,6 +688,7 @@ function GP:lock() -- Put hand into field
         end
     end end
 
+    if #self.dropHistory>=self.settings.maxDropHistory then rem(self.dropHistory,1) end
     ins(self.dropHistory,{
         id=self.hand.id,
         direction=self.hand.direction,
@@ -1378,6 +1379,8 @@ local baseEnv={
 
     -- Other
     maxActionHistory=260,
+    maxDropHistory=160,
+    maxClearHistory=60,
     script=false,
     IRSpushUp=true,
     skin='gela_template',

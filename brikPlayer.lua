@@ -1009,6 +1009,7 @@ function BP:doClear(fullLines)
         time=self.time,
         gameTime=self.gameTime,
     }
+    if #self.clearHistory>=self.settings.maxClearHistory then rem(self.clearHistory,1) end
     ins(self.clearHistory,his)
     self:shakeBoard('-clear',n)
     self:playSound('clear',n)
@@ -1050,6 +1051,7 @@ function BP:brikDropped() -- Drop & lock brik, and trigger a lot of things
 
     -- Lock to field
     self:lock()
+    if #self.dropHistory>=self.settings.maxDropHistory then rem(self.dropHistory,1) end
     ins(self.dropHistory,{
         id=self.hand.id,
         x=self.handX,
@@ -1890,6 +1892,8 @@ local baseEnv={
 
     -- Other
     maxActionHistory=260,
+    maxDropHistory=160,
+    maxClearHistory=60,
     IRSpushUp=true, -- Use bottom-align when IRS or suffocate
     strictLockout=false, -- Lockout causes game over
     script=false,
