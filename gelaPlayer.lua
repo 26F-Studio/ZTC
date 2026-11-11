@@ -1,3 +1,6 @@
+---------------------
+---WIP, DO NOT USE---
+---------------------
 local require=simpRequire('ZTC.')
 
 local gc=love.graphics
