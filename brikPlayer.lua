@@ -1622,18 +1622,20 @@ function BP:render()
 
                 -- Float hold
                 if self.floatHolds[1] then
-                    for n=1,#self.floatHolds do
-                        local H=self.floatHolds[n]
+                    local L=self.floatHolds
+                    for n=1,#L do
+                        local H=L[n].hand.matrix
+                        local hx,hy=L[n].handX,L[n].handY
                         local disabled=SET.holdMode=='float' and not SET.infHold and n<=self.holdTime
                         for y=1,#H do for x=1,#H[1] do
                             if H[y][x] then
-                                local dx,dy=(self.handX+x-2)*40,-(self.handY+y-1)*40
+                                local dx,dy=(hx+x-2)*40,-(hy+y-1)*40
                                 gc_translate(dx,dy)
                                 skin.drawFloatHoldCell(H[y][x],disabled,H,x,y)
                                 gc_translate(-dx,-dy)
                             end
                         end end
-                        local dx,dy=(self.handX-1+#H[1]/2)*40,-(self.handY+#H/2)*40+5
+                        local dx,dy=(hx-1+#H[1]/2)*40,-(hy+#H/2)*40+5
                         gc_translate(dx,dy)
                         skin.drawFloatHoldMark(n,disabled)
                         gc_translate(-dx,-dy)
