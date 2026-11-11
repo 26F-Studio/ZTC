@@ -77,9 +77,9 @@ do -- marathon
                     local _level=md.level
                     md.level=min(max(md.level+1,min(md.level+3,autoLevel)),30)
                     if _level<=10 and md.level>10 then
-                        md.transition1=#P.dropHistory
+                        md.transition1=P.stat.piece
                     elseif _level<=20 and md.level>20 then
-                        md.transition2=#P.dropHistory
+                        md.transition2=P.stat.piece
                     end
 
                     P.settings.dropDelay=levels[md.level].drop

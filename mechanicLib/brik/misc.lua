@@ -31,14 +31,14 @@ function misc.invincible_event_afterLock(P)
 end
 
 function misc.suffocateLock_event_whenSuffocate(P)
-    local clearCount=#P.clearHistory
+    local clearCnt=P.stat.clearTime
     P.deathTimer=false
     P.ghostState=false
     if P.settings.effect_suffocate then
         P:createDesuffocateEffect()
     end
     P:brikDropped()
-    if clearCount==#P.clearHistory then
+    if clearCnt==P.stat.clearTime then
         P:finish('suffocate')
     end
 end

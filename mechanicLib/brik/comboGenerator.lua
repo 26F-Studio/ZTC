@@ -74,7 +74,7 @@ function comboGenerator.event_playerInit(P)
     P.modeData.comboCount=0
     P.modeData.levelRemain=0
     P.modeData.levelsCleared=0
-    P.modeData._curHisLen=false
+    P.modeData._curClearTime=false
     newMap(P)
 end
 function comboGenerator.event_afterDrop(P)
@@ -88,26 +88,27 @@ function comboGenerator.event_afterDrop(P)
     end
 end
 function comboGenerator.event_afterLock(P)
-    P.modeData._curHisLen=#P.clearHistory
+    P.modeData._curClearTime=P.stat.clearTime
 end
 function comboGenerator.event_afterClear(P,clear)
     P.modeData.levelRemain=P.modeData.levelRemain-clear.line
 end
 function comboGenerator.event_beforeDiscard(P)
-    if #P.clearHistory>P.modeData._curHisLen then
-        if not P.modeData.levelStarted then
-            P.modeData.levelStarted=true
+    local md=P.modeData
+    if P.stat.clearTime>md._curClearTime then
+        if not md.levelStarted then
+            md.levelStarted=true
         else
-            P.modeData.comboCount=P.modeData.comboCount+1
+            md.comboCount=md.comboCount+1
         end
-        if P.modeData.comboCount>=P.modeData.target.combo then
+        if md.comboCount>=md.target.combo then
             P:finish('win')
-        elseif P.modeData.levelRemain<=0 then
-            P.modeData.levelsCleared=P.modeData.levelsCleared+1
+        elseif md.levelRemain<=0 then
+            md.levelsCleared=md.levelsCleared+1
             newMap(P)
             P:playSound('beep_rise')
         end
-    elseif P.modeData.levelStarted then
+    elseif md.levelStarted then
         newMap(P)
         P:playSound('discharge')
     end
