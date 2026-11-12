@@ -362,20 +362,24 @@ end
 
 ---@param id integer
 ---@param pType 'brik' | 'gela' | 'acry'
----@param remote? boolean
-function GAME.newPlayer(id,pType,remote)
+---@param opts? table
+function GAME.newPlayer(id,pType,opts)
     if not (type(id)=='number' and math.floor(id)==id and id>=1 and id<=1000) then
         MSG.log('error',"player id must be 1~1000 integer")
+        return
+    end
+    if GAME.playerMap and GAME.playerMap[id] then
+        MSG.log('error',"player id duplicated: "..tostring(id))
         return
     end
 
     local P
     if pType=='brik' then
-        P=require'brikPlayer'.new(remote)
+        P=require'brikPlayer'.new()
     elseif pType=='gela' then
-        P=require'gelaPlayer'.new(remote)
+        P=require'gelaPlayer'.new()
     elseif pType=='acry' then
-        P=require'acryPlayer'.new(remote)
+        P=require'acryPlayer'.new()
     else
         MSG.log('error',"invalid player type :'"..tostring(pType).."'")
         return
@@ -383,6 +387,12 @@ function GAME.newPlayer(id,pType,remote)
 
     P.gameMode=pType
     P.id=id
+
+    P.isLocal=true
+    P.hasAuthority=true
+    P.ownerId=false
+    if opts then TABLE.update(P,opts,0) end
+
     P.team=0
     GAME.playerMap[id]=P
     table.insert(GAME.playerList,P)

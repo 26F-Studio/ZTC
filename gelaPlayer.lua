@@ -1396,8 +1396,8 @@ local baseEnv={
     inputDelay=0,
 }
 ---@return Techmino.Player.Gela
-function GP.new(remote)
-    local self=setmetatable(require'basePlayer'.new(remote),{__index=GP,__metatable=true})
+function GP.new()
+    local self=setmetatable(require'basePlayer'.new(),{__index=GP,__metatable=true})
     ---@cast self Techmino.Player.Gela
     self.settings=TABLE.copyAll(baseEnv)
     self.event={

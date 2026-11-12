@@ -7,11 +7,13 @@ local sign,expApproach=MATH.sign,MATH.expApproach
 
 ---@class Techmino.Player
 ---@field gameMode Techmino.Player.Type
----@field id number limited to 1~1000
+---@field id number Unique within a match, assigned by GAME.newPlayer
 ---@field team number Team ID, 0 as No Team
 ---@field isMain boolean
 ---@field sound boolean
----@field remote boolean
+---@field isLocal boolean Is this player's input controlled by this client?
+---@field ownerId string | number | false Client/peer that controls this player
+---@field hasAuthority boolean May this client make gameplay decisions for this player? Independent from input control; a host may decide for a remote player.
 ---@field seed number
 ---@field rngPool table<string, love.RandomGenerator>
 ---@field settings Techmino.Mode.Setting.Brik | Techmino.Mode.Setting.Gela | Techmino.Mode.Setting.Acry
@@ -780,11 +782,13 @@ local soundTimeMeta={
     __metatable=true,
 }
 ---@return Techmino.Player
-function P.new(remote)
+function P.new()
     local self={}
     self.isMain=false
     self.sound=false
-    self.remote=not not remote
+    self.isLocal=true
+    self.ownerId=false
+    self.hasAuthority=true
     self.seed=GAME.seed
     self.rngPool={}
 

@@ -720,8 +720,8 @@ local baseEnv={
     inputDelay=0,
 }
 ---@return Techmino.Player.Acry
-function AP.new(remote)
-    local self=setmetatable(require'basePlayer'.new(remote),{__index=AP,__metatable=true})
+function AP.new()
+    local self=setmetatable(require'basePlayer'.new(),{__index=AP,__metatable=true})
     ---@cast self Techmino.Player.Acry
     self.settings=TABLE.copyAll(baseEnv)
     self.event={

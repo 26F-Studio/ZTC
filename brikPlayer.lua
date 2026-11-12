@@ -1923,8 +1923,8 @@ local baseEnv={
     garbageColor=777,
 }
 ---@return Techmino.Player.Brik
-function BP.new(remote)
-    local self=setmetatable(require'basePlayer'.new(remote),{__index=BP,__metatable=true})
+function BP.new()
+    local self=setmetatable(require'basePlayer'.new(),{__index=BP,__metatable=true})
     ---@cast self Techmino.Player.Brik
     self.settings=TABLE.copyAll(baseEnv)
     self.event={
